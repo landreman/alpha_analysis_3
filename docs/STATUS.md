@@ -6,7 +6,7 @@ repository's M0–M5 milestones apply; the milestones of `landreman/alpha_analys
 
 | ID | Deliverable | Dependencies | Done | Evidence / PR |
 | --- | --- | --- | --- | --- |
-| M0 | Repository, scientific contract, data and workflow | None | [x] | [Bootstrap checks](validation/bootstrap.md) |
+| M0 | Repository, scientific contract, data and workflow | None | [x] | [Bootstrap checks](validation/bootstrap.md); [Tests run 42825860916](https://github.com/landreman/alpha_analysis_3/actions/runs/42825860916) |
 | M1 | Pitch-independent geometry and the per-pitch ledger | M0 | [ ] | |
 | M2 | Transitions, cells and complete coverage | M1 | [ ] | |
 | M3 | Reachability and the bracket: first complete coarse f | M2 | [ ] | |
