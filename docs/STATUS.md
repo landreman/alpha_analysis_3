@@ -21,6 +21,13 @@ transition links and its graph are known to be incomplete (DESIGN §4 marks the 
 refinements). Keep the ledger and the transition count as reported checks from the first
 milestone on.
 
+M1 has a draft implementation and [five-file evidence](validation/m1/README.md), but
+remains incomplete. Confirmed PCA wells first return after about 74 and 115 field
+periods, beyond the planned 48–64-period cap; their capped weight is not replaced
+with zero. The 30-case ledger also has a d23p4 ratio just outside its 1% gate.
+[Proposed ADR 0001](adr/0001-long-well-cap-and-m1-ledger.md) records the required
+decision and follow-up checks. Do not start M2 until M1's gates pass.
+
 Source: h(ρ) = (1 − ρ²)⁴ with h = 1 as a second column. Numerical error target
 max(0.02 f, 0.01). Runtime target 300 s per equilibrium, memory under 2 GB.
 

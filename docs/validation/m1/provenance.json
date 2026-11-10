@@ -1,0 +1,3685 @@
+{
+  "initial": {
+    "code_revision": "a6a31fc9a2627b62ad78e01e276bdce272d13f63",
+    "source_hashes": {
+      "src/alpha_analysis_3/__init__.py": "cad41e41dc02a6bb1b517bbf8ebb463a8401eadd5a1a66332a86e57405ed2ddf",
+      "src/alpha_analysis_3/boozer_field.py": "1132eeb1e3e528dde2bfd6b5490d0e118cc02a05852de68a60e1c4423e1ad2ac",
+      "src/alpha_analysis_3/chains.py": "b24b20f6d37546d8cecf0261feae7e2aceccf8be108f6dda425d4564c8ef9893",
+      "src/alpha_analysis_3/conventions.py": "6240892864f492464f89cfb1bff80a39ba3588e1a5ed3b1650c5ea02ed7a0c58",
+      "src/alpha_analysis_3/diagnostics.py": "b861ec7452395ef59ac566727f84a6ca52ed600279847a4c94e61c4ee1484faa",
+      "src/alpha_analysis_3/ledger.py": "b508810b298911863c3c5941aa2069a9b990eb41918113de406afa2444e99279",
+      "src/alpha_analysis_3/ridge.py": "26b1449f73a44dc9b1c2d67013e7febde94366d69d0ece2c3ddadd68c23353ae",
+      "src/alpha_analysis_3/tables.py": "f759d50e9d66c5e6145ee5c2f51a4006aa4251fc453d2b14ad21c8ccc09c07ea",
+      "src/alpha_analysis_3/wells.py": "34f2f81974d0c91aead576c5b077dda282e06b071cbed90760671dd3340effd2"
+    },
+    "python": "3.12.14",
+    "numpy": "2.5.4",
+    "workers": 1,
+    "controls": {
+      "output": "outputs/m1-initial",
+      "file": null,
+      "surfaces": 24,
+      "table": 512,
+      "nodes": 128,
+      "periods": 48,
+      "volume_phi": 512,
+      "order": 64
+    },
+    "source": "h(rho)=(1-rho^2)^4; rho=sqrt(s); h=1 alongside",
+    "extrema_scope": "all recorded s surfaces, full periodic angular grids; numerical estimates",
+    "runs": [
+      {
+        "file": "PCA",
+        "setup_seconds": 34.88891181400004,
+        "total_seconds": 67.36157003300002,
+        "peak_rss_gb": 0.372703232,
+        "snapshots": [
+          {
+            "seconds": 60,
+            "stage": "PCA lambda=0.9",
+            "rss_gb": 0.341143552
+          }
+        ],
+        "volumes": {
+          "uniform": 11.302755573561404,
+          "peaked": 2.198442433389515
+        },
+        "surfaces": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "nodes": 6894,
+        "unpartnered_nodes": 85
+      },
+      {
+        "file": "TURBO",
+        "setup_seconds": 25.797606368999936,
+        "total_seconds": 57.688245877999975,
+        "peak_rss_gb": 0.435093504,
+        "snapshots": [],
+        "volumes": {
+          "uniform": 10.872791923049498,
+          "peaked": 2.0897169997810097
+        },
+        "surfaces": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "nodes": 5179,
+        "unpartnered_nodes": 62
+      },
+      {
+        "file": "DMercFail",
+        "setup_seconds": 20.931741106000004,
+        "total_seconds": 55.07400671200003,
+        "peak_rss_gb": 0.424710144,
+        "snapshots": [],
+        "volumes": {
+          "uniform": 20.417244390560505,
+          "peaked": 4.169288483652526
+        },
+        "surfaces": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "nodes": 3813,
+        "unpartnered_nodes": 0
+      },
+      {
+        "file": "d23p4",
+        "setup_seconds": 23.626446912999995,
+        "total_seconds": 51.49955887600004,
+        "peak_rss_gb": 0.420552704,
+        "snapshots": [],
+        "volumes": {
+          "uniform": 17.358630706702172,
+          "peaked": 3.5715211239897986
+        },
+        "surfaces": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "nodes": 4275,
+        "unpartnered_nodes": 0
+      },
+      {
+        "file": "n3are",
+        "setup_seconds": 37.00663706499995,
+        "total_seconds": 58.66355956299992,
+        "peak_rss_gb": 0.435306496,
+        "snapshots": [],
+        "volumes": {
+          "uniform": 18.071907331863056,
+          "peaked": 3.7458198788334496
+        },
+        "surfaces": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "nodes": 7918,
+        "unpartnered_nodes": 34
+      }
+    ],
+    "failures": [
+      [
+        "PCA",
+        0.05,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.05,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.1,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.1,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.5,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.5,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.8,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.8,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.9,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.9,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.95,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.95,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "TURBO",
+        0.5,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "TURBO",
+        0.5,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "TURBO",
+        0.9,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "TURBO",
+        0.9,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "DMercFail",
+        0.05,
+        "uniform",
+        null,
+        0.01
+      ],
+      [
+        "DMercFail",
+        0.05,
+        "peaked",
+        null,
+        0.01
+      ],
+      [
+        "DMercFail",
+        0.9,
+        "peaked",
+        0.9839773760491767,
+        0.01
+      ],
+      [
+        "DMercFail",
+        0.95,
+        "peaked",
+        1.0146418184332986,
+        0.01
+      ],
+      [
+        "d23p4",
+        0.05,
+        "uniform",
+        null,
+        0.01
+      ],
+      [
+        "d23p4",
+        0.05,
+        "peaked",
+        null,
+        0.01
+      ],
+      [
+        "d23p4",
+        0.1,
+        "uniform",
+        null,
+        0.01
+      ],
+      [
+        "d23p4",
+        0.1,
+        "peaked",
+        null,
+        0.01
+      ],
+      [
+        "d23p4",
+        0.8,
+        "peaked",
+        1.0220099330485064,
+        0.01
+      ],
+      [
+        "d23p4",
+        0.9,
+        "uniform",
+        0.9864225468773982,
+        0.01
+      ],
+      [
+        "d23p4",
+        0.9,
+        "peaked",
+        0.9788933812404148,
+        0.01
+      ],
+      [
+        "d23p4",
+        0.95,
+        "uniform",
+        0.9769343928223334,
+        0.01
+      ],
+      [
+        "d23p4",
+        0.95,
+        "peaked",
+        0.9793639931965311,
+        0.01
+      ],
+      [
+        "n3are",
+        0.1,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "n3are",
+        0.1,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "n3are",
+        0.5,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "n3are",
+        0.5,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "n3are",
+        0.8,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "n3are",
+        0.8,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "n3are",
+        0.9,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "n3are",
+        0.9,
+        "peaked",
+        null,
+        0.06
+      ]
+    ],
+    "failed_probes": [],
+    "raw_T_Gamma_nonzero": [
+      {
+        "file": "PCA",
+        "lambda_n": 0.05,
+        "surface_counts": []
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.1,
+        "surface_counts": [
+          {
+            "index": 24,
+            "T": 0,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 1,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.5,
+        "surface_counts": [
+          {
+            "index": 4,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 5,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 6,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 7,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 8,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 9,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 10,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 11,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 12,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 13,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 14,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 15,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 1,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.8,
+        "surface_counts": [
+          {
+            "index": 14,
+            "T": 1,
+            "Gamma": 4
+          },
+          {
+            "index": 15,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.9,
+        "surface_counts": [
+          {
+            "index": 20,
+            "T": 3,
+            "Gamma": 4
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.95,
+        "surface_counts": [
+          {
+            "index": 23,
+            "T": 0,
+            "Gamma": 4
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 4
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 4,
+            "Gamma": 6
+          }
+        ]
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.05,
+        "surface_counts": []
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.1,
+        "surface_counts": [
+          {
+            "index": 27,
+            "T": 0,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.5,
+        "surface_counts": []
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.8,
+        "surface_counts": [
+          {
+            "index": 12,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 13,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 14,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 15,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.9,
+        "surface_counts": [
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 4
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.95,
+        "surface_counts": [
+          {
+            "index": 23,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "DMercFail",
+        "lambda_n": 0.05,
+        "surface_counts": [
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 1,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "DMercFail",
+        "lambda_n": 0.1,
+        "surface_counts": []
+      },
+      {
+        "file": "DMercFail",
+        "lambda_n": 0.5,
+        "surface_counts": []
+      },
+      {
+        "file": "DMercFail",
+        "lambda_n": 0.8,
+        "surface_counts": [
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "DMercFail",
+        "lambda_n": 0.9,
+        "surface_counts": [
+          {
+            "index": 8,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 9,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 10,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 11,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 12,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 13,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 14,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 15,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "DMercFail",
+        "lambda_n": 0.95,
+        "surface_counts": [
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "d23p4",
+        "lambda_n": 0.05,
+        "surface_counts": []
+      },
+      {
+        "file": "d23p4",
+        "lambda_n": 0.1,
+        "surface_counts": []
+      },
+      {
+        "file": "d23p4",
+        "lambda_n": 0.5,
+        "surface_counts": [
+          {
+            "index": 0,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 1,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 2,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 3,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 4,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 5,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 6,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 7,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 8,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 9,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 10,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 11,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 12,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 13,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 14,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 15,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "d23p4",
+        "lambda_n": 0.8,
+        "surface_counts": [
+          {
+            "index": 15,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "d23p4",
+        "lambda_n": 0.9,
+        "surface_counts": [
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "d23p4",
+        "lambda_n": 0.95,
+        "surface_counts": [
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 0,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.05,
+        "surface_counts": []
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.1,
+        "surface_counts": []
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.5,
+        "surface_counts": [
+          {
+            "index": 6,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 7,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 8,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 9,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 10,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 11,
+            "T": 2,
+            "Gamma": 4
+          },
+          {
+            "index": 12,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 13,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 14,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.8,
+        "surface_counts": [
+          {
+            "index": 20,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 4
+          },
+          {
+            "index": 22,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 23,
+            "T": 3,
+            "Gamma": 4
+          },
+          {
+            "index": 24,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 25,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 26,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 27,
+            "T": 4,
+            "Gamma": 4
+          }
+        ]
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.9,
+        "surface_counts": [
+          {
+            "index": 24,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 25,
+            "T": 4,
+            "Gamma": 6
+          },
+          {
+            "index": 26,
+            "T": 5,
+            "Gamma": 6
+          },
+          {
+            "index": 27,
+            "T": 6,
+            "Gamma": 6
+          }
+        ]
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.95,
+        "surface_counts": [
+          {
+            "index": 26,
+            "T": 1,
+            "Gamma": 4
+          },
+          {
+            "index": 27,
+            "T": 4,
+            "Gamma": 4
+          }
+        ]
+      }
+    ],
+    "count_encoding": "Missing surface indices have T=Gamma=0; indices refer to that file run surfaces."
+  },
+  "fold_fix": {
+    "code_revision": "a6a31fc9a2627b62ad78e01e276bdce272d13f63",
+    "source_hashes": {
+      "src/alpha_analysis_3/__init__.py": "cad41e41dc02a6bb1b517bbf8ebb463a8401eadd5a1a66332a86e57405ed2ddf",
+      "src/alpha_analysis_3/boozer_field.py": "1132eeb1e3e528dde2bfd6b5490d0e118cc02a05852de68a60e1c4423e1ad2ac",
+      "src/alpha_analysis_3/chains.py": "b6c48e6a76532b0dbfbb4abfb6070706483aada5bfefb5b5fb4b15992de74a9c",
+      "src/alpha_analysis_3/conventions.py": "6240892864f492464f89cfb1bff80a39ba3588e1a5ed3b1650c5ea02ed7a0c58",
+      "src/alpha_analysis_3/diagnostics.py": "39c31bb00a6e92af605fbf5545dd7c629907eced725d0ad7f2bb7f253dfffe0c",
+      "src/alpha_analysis_3/ledger.py": "15dd8f9ed423e2a9c116bf785f3cae0165ddf27b04602742c9daad918c54723b",
+      "src/alpha_analysis_3/ridge.py": "721ca2aca9c52d1485e9fc252b0d1700a88883cbc77f3eb9a20eabb7cb9397ca",
+      "src/alpha_analysis_3/tables.py": "cc94011f9f48d35b0ccee1c635f729d0a87db92d551c86cc2fba9b409f95d4e4",
+      "src/alpha_analysis_3/wells.py": "7e8cf01d78df4821b861f74349225dcf92f93d3ad9a735c4fdfc08e2365190b5"
+    },
+    "python": "3.12.14",
+    "numpy": "2.5.4",
+    "workers": 1,
+    "controls": {
+      "output": "outputs/m1-fold-fix",
+      "file": "PCA",
+      "surfaces": 24,
+      "table": 512,
+      "nodes": 128,
+      "periods": 48,
+      "samples": 128,
+      "volume_phi": 512,
+      "order": 64
+    },
+    "source": "h(rho)=(1-rho^2)^4; rho=sqrt(s); h=1 alongside",
+    "extrema_scope": "s in [0,1], 65 radial x 64\u00b2 angular seeds, exact-series optimization; numerical estimates",
+    "runs": [
+      {
+        "file": "PCA",
+        "setup_seconds": 34.957606544999976,
+        "total_seconds": 65.52378172800002,
+        "peak_rss_gb": 0.39375667200000003,
+        "snapshots": [
+          {
+            "seconds": 60,
+            "stage": "PCA lambda=0.9",
+            "rss_gb": 0.36575641600000003
+          }
+        ],
+        "volumes": {
+          "uniform": 11.302755573561404,
+          "peaked": 2.198442433389515
+        },
+        "surfaces": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "extrema": {
+          "min": {
+            "B": 7.715684270822196,
+            "s_theta_phi": [
+              1.0,
+              2.703543409633985,
+              2.41213972508965
+            ]
+          },
+          "max": {
+            "B": 12.030690150609967,
+            "s_theta_phi": [
+              1.0,
+              2.8453104336310124,
+              5.774455858467539
+            ]
+          }
+        },
+        "nodes": 6894,
+        "unpartnered_nodes": 88
+      }
+    ],
+    "failures": [
+      [
+        "PCA",
+        0.1,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.1,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.8,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.8,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.95,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.95,
+        "peaked",
+        null,
+        0.06
+      ]
+    ],
+    "failed_probes": [
+      {
+        "file": "PCA",
+        "lambda_n": 0.1,
+        "probes": [
+          {
+            "s": 0.7017391304347826,
+            "node": 0,
+            "status": 3,
+            "theta": 2.128024127790614,
+            "phi": 1.9521188388690494,
+            "H": 8.189029066682245,
+            "first_min": 8.122778650504975,
+            "z_in": null,
+            "z_out": null
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.8,
+        "probes": [
+          {
+            "s": 0.44608695652173913,
+            "node": 125,
+            "status": 2,
+            "theta": 9.935229442252941,
+            "phi": 6.903643850431844,
+            "H": 11.177372768641177,
+            "first_min": 8.460534798674676,
+            "z_in": null,
+            "z_out": null
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.95,
+        "probes": [
+          {
+            "s": 0.8295652173913044,
+            "node": 150,
+            "status": 2,
+            "theta": 15.982749366888166,
+            "phi": 13.057817282260391,
+            "H": 11.816267134644082,
+            "first_min": 8.038202377815038,
+            "z_in": null,
+            "z_out": null
+          }
+        ]
+      }
+    ],
+    "raw_T_Gamma_nonzero": [
+      {
+        "file": "PCA",
+        "lambda_n": 0.05,
+        "surface_counts": []
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.1,
+        "surface_counts": [
+          {
+            "index": 25,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.5,
+        "surface_counts": [
+          {
+            "index": 4,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 5,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 6,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 7,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 8,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 9,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 10,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 11,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 12,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 13,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 14,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 15,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 1,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.8,
+        "surface_counts": [
+          {
+            "index": 14,
+            "T": 1,
+            "Gamma": 4
+          },
+          {
+            "index": 15,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.9,
+        "surface_counts": [
+          {
+            "index": 20,
+            "T": 3,
+            "Gamma": 4
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.95,
+        "surface_counts": [
+          {
+            "index": 23,
+            "T": 0,
+            "Gamma": 4
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 4
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 3,
+            "Gamma": 6
+          }
+        ]
+      }
+    ],
+    "count_encoding": "Missing surface indices have T=Gamma=0; indices refer to that file run surfaces."
+  },
+  "derivative": {
+    "code_revision": "a6a31fc9a2627b62ad78e01e276bdce272d13f63",
+    "source_hashes": {
+      "src/alpha_analysis_3/__init__.py": "cad41e41dc02a6bb1b517bbf8ebb463a8401eadd5a1a66332a86e57405ed2ddf",
+      "src/alpha_analysis_3/boozer_field.py": "1132eeb1e3e528dde2bfd6b5490d0e118cc02a05852de68a60e1c4423e1ad2ac",
+      "src/alpha_analysis_3/chains.py": "70d7ec0ea2c3659a26e7cf2c148ce9425754c5640d9df242c586fbde05b34606",
+      "src/alpha_analysis_3/conventions.py": "6240892864f492464f89cfb1bff80a39ba3588e1a5ed3b1650c5ea02ed7a0c58",
+      "src/alpha_analysis_3/diagnostics.py": "39c31bb00a6e92af605fbf5545dd7c629907eced725d0ad7f2bb7f253dfffe0c",
+      "src/alpha_analysis_3/ledger.py": "15dd8f9ed423e2a9c116bf785f3cae0165ddf27b04602742c9daad918c54723b",
+      "src/alpha_analysis_3/ridge.py": "721ca2aca9c52d1485e9fc252b0d1700a88883cbc77f3eb9a20eabb7cb9397ca",
+      "src/alpha_analysis_3/tables.py": "cc94011f9f48d35b0ccee1c635f729d0a87db92d551c86cc2fba9b409f95d4e4",
+      "src/alpha_analysis_3/wells.py": "7e8cf01d78df4821b861f74349225dcf92f93d3ad9a735c4fdfc08e2365190b5"
+    },
+    "python": "3.12.14",
+    "numpy": "2.5.4",
+    "workers": 1,
+    "controls": {
+      "output": "outputs/m1-derivative",
+      "file": null,
+      "surfaces": 24,
+      "table": 512,
+      "nodes": 128,
+      "periods": 48,
+      "samples": 128,
+      "volume_phi": 512,
+      "order": 64
+    },
+    "source": "h(rho)=(1-rho^2)^4; rho=sqrt(s); h=1 alongside",
+    "extrema_scope": "s in [0,1], 65 radial x 64\u00b2 angular seeds, exact-series optimization; numerical estimates",
+    "runs": [
+      {
+        "file": "PCA",
+        "setup_seconds": 38.80079303699995,
+        "total_seconds": 69.61226008599999,
+        "peak_rss_gb": 0.392462336,
+        "snapshots": [
+          {
+            "seconds": 60,
+            "stage": "PCA lambda=0.8",
+            "rss_gb": 0.361930752
+          }
+        ],
+        "volumes": {
+          "uniform": 11.302755573561404,
+          "peaked": 2.198442433389515
+        },
+        "surfaces": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "extrema": {
+          "min": {
+            "B": 7.715684270822196,
+            "s_theta_phi": [
+              1.0,
+              2.703543409633985,
+              2.41213972508965
+            ]
+          },
+          "max": {
+            "B": 12.030690150609967,
+            "s_theta_phi": [
+              1.0,
+              2.8453104336310124,
+              5.774455858467539
+            ]
+          }
+        },
+        "nodes": 6894,
+        "unpartnered_nodes": 88
+      },
+      {
+        "file": "TURBO",
+        "setup_seconds": 25.97568917800004,
+        "total_seconds": 55.46759877500017,
+        "peak_rss_gb": 0.42814668800000005,
+        "snapshots": [],
+        "volumes": {
+          "uniform": 10.872791923049498,
+          "peaked": 2.0897169997810097
+        },
+        "surfaces": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "extrema": {
+          "min": {
+            "B": 7.342416966461361,
+            "s_theta_phi": [
+              1.0,
+              2.3868621017711487,
+              2.1426526654820695
+            ]
+          },
+          "max": {
+            "B": 12.032438296028296,
+            "s_theta_phi": [
+              1.0,
+              2.4084015468247832,
+              4.71840770100517
+            ]
+          }
+        },
+        "nodes": 5179,
+        "unpartnered_nodes": 58
+      },
+      {
+        "file": "DMercFail",
+        "setup_seconds": 22.17820019199985,
+        "total_seconds": 54.17771508099986,
+        "peak_rss_gb": 0.43689984000000004,
+        "snapshots": [],
+        "volumes": {
+          "uniform": 20.417244390560505,
+          "peaked": 4.169288483652526
+        },
+        "surfaces": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "extrema": {
+          "min": {
+            "B": 5.040465893072383,
+            "s_theta_phi": [
+              0.00010528372648774434,
+              0.0,
+              3.1415926535877055
+            ]
+          },
+          "max": {
+            "B": 12.050343540204434,
+            "s_theta_phi": [
+              1.0,
+              3.141592653589793,
+              0.0
+            ]
+          }
+        },
+        "nodes": 3813,
+        "unpartnered_nodes": 0
+      },
+      {
+        "file": "d23p4",
+        "setup_seconds": 23.92761651900014,
+        "total_seconds": 49.99790880199998,
+        "peak_rss_gb": 0.438882304,
+        "snapshots": [],
+        "volumes": {
+          "uniform": 17.358630706702172,
+          "peaked": 3.5715211239897986
+        },
+        "surfaces": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "extrema": {
+          "min": {
+            "B": 2.2930590216460307,
+            "s_theta_phi": [
+              0.07979013685027762,
+              3.141592653589793,
+              3.141592653589793
+            ]
+          },
+          "max": {
+            "B": 3.370588903233545,
+            "s_theta_phi": [
+              1.0,
+              3.141592653589793,
+              0.0
+            ]
+          }
+        },
+        "nodes": 4275,
+        "unpartnered_nodes": 0
+      },
+      {
+        "file": "n3are",
+        "setup_seconds": 39.976654931999974,
+        "total_seconds": 62.056886460999976,
+        "peak_rss_gb": 0.43900108800000004,
+        "snapshots": [
+          {
+            "seconds": 60,
+            "stage": "n3are lambda=0.9",
+            "rss_gb": 0.438882304
+          }
+        ],
+        "volumes": {
+          "uniform": 18.071907331863056,
+          "peaked": 3.7458198788334496
+        },
+        "surfaces": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "extrema": {
+          "min": {
+            "B": 4.90926072317519,
+            "s_theta_phi": [
+              1.0,
+              1.448035303115541e-08,
+              3.141592653589793
+            ]
+          },
+          "max": {
+            "B": 7.069800279009324,
+            "s_theta_phi": [
+              1.0,
+              2.081824267429984,
+              4.655888552356221
+            ]
+          }
+        },
+        "nodes": 7918,
+        "unpartnered_nodes": 34
+      }
+    ],
+    "failures": [
+      [
+        "PCA",
+        0.8,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.8,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.95,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "PCA",
+        0.95,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "TURBO",
+        0.9,
+        "uniform",
+        null,
+        0.06
+      ],
+      [
+        "TURBO",
+        0.9,
+        "peaked",
+        null,
+        0.06
+      ],
+      [
+        "d23p4",
+        0.95,
+        "uniform",
+        1.010127583152399,
+        0.01
+      ]
+    ],
+    "failed_probes": [
+      {
+        "file": "PCA",
+        "lambda_n": 0.8,
+        "probes": [
+          {
+            "s": 0.44608695652173913,
+            "node": 125,
+            "status": 2,
+            "theta": 9.935229442252941,
+            "phi": 6.903643850431844,
+            "H": 11.177372768641177,
+            "first_min": 8.460534798674674,
+            "z_in": null,
+            "z_out": null
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.95,
+        "probes": [
+          {
+            "s": 0.8295652173913044,
+            "node": 150,
+            "status": 2,
+            "theta": 15.982749366888166,
+            "phi": 13.057817282260391,
+            "H": 11.816267134644082,
+            "first_min": 8.03820237781504,
+            "z_in": null,
+            "z_out": null
+          }
+        ]
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.9,
+        "probes": [
+          {
+            "s": 0.6591304347826087,
+            "node": 21,
+            "status": 2,
+            "theta": 3.5690017001256544,
+            "phi": 0.94015032282564,
+            "H": 11.564340678875483,
+            "first_min": 8.04631081999082,
+            "z_in": null,
+            "z_out": null
+          },
+          {
+            "s": 0.6591304347826087,
+            "node": 22,
+            "status": 2,
+            "theta": 3.589830414129377,
+            "phi": 0.9843687256598073,
+            "H": 11.566685845157918,
+            "first_min": 8.048027589910273,
+            "z_in": null,
+            "z_out": null
+          }
+        ]
+      }
+    ],
+    "raw_T_Gamma_nonzero": [
+      {
+        "file": "PCA",
+        "lambda_n": 0.05,
+        "surface_counts": []
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.1,
+        "surface_counts": [
+          {
+            "index": 25,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.5,
+        "surface_counts": [
+          {
+            "index": 4,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 5,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 6,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 7,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 8,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 9,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 10,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 11,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 12,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 13,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 14,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 15,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 1,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.8,
+        "surface_counts": [
+          {
+            "index": 14,
+            "T": 1,
+            "Gamma": 4
+          },
+          {
+            "index": 15,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.9,
+        "surface_counts": [
+          {
+            "index": 20,
+            "T": 3,
+            "Gamma": 4
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "PCA",
+        "lambda_n": 0.95,
+        "surface_counts": [
+          {
+            "index": 23,
+            "T": 0,
+            "Gamma": 4
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 4
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 3,
+            "Gamma": 6
+          }
+        ]
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.05,
+        "surface_counts": []
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.1,
+        "surface_counts": [
+          {
+            "index": 27,
+            "T": 0,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.5,
+        "surface_counts": []
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.8,
+        "surface_counts": [
+          {
+            "index": 12,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 13,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 14,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 15,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.9,
+        "surface_counts": [
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 4
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "TURBO",
+        "lambda_n": 0.95,
+        "surface_counts": [
+          {
+            "index": 23,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "DMercFail",
+        "lambda_n": 0.05,
+        "surface_counts": [
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 1,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "DMercFail",
+        "lambda_n": 0.1,
+        "surface_counts": []
+      },
+      {
+        "file": "DMercFail",
+        "lambda_n": 0.5,
+        "surface_counts": []
+      },
+      {
+        "file": "DMercFail",
+        "lambda_n": 0.8,
+        "surface_counts": [
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "DMercFail",
+        "lambda_n": 0.9,
+        "surface_counts": [
+          {
+            "index": 8,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 9,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 10,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 11,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 12,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 13,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 14,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 15,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "DMercFail",
+        "lambda_n": 0.95,
+        "surface_counts": [
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "d23p4",
+        "lambda_n": 0.05,
+        "surface_counts": []
+      },
+      {
+        "file": "d23p4",
+        "lambda_n": 0.1,
+        "surface_counts": []
+      },
+      {
+        "file": "d23p4",
+        "lambda_n": 0.5,
+        "surface_counts": [
+          {
+            "index": 0,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 1,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 2,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 3,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 4,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 5,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 6,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 7,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 8,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 9,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 10,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 11,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 12,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 13,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 14,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 15,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "d23p4",
+        "lambda_n": 0.8,
+        "surface_counts": [
+          {
+            "index": 15,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 16,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 17,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 18,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 19,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 20,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "d23p4",
+        "lambda_n": 0.9,
+        "surface_counts": [
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 22,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 23,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 2,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "d23p4",
+        "lambda_n": 0.95,
+        "surface_counts": [
+          {
+            "index": 24,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 25,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 26,
+            "T": 1,
+            "Gamma": 2
+          },
+          {
+            "index": 27,
+            "T": 1,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.05,
+        "surface_counts": []
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.1,
+        "surface_counts": []
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.5,
+        "surface_counts": [
+          {
+            "index": 6,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 7,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 8,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 9,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 10,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 11,
+            "T": 2,
+            "Gamma": 4
+          },
+          {
+            "index": 12,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 13,
+            "T": 2,
+            "Gamma": 2
+          },
+          {
+            "index": 14,
+            "T": 1,
+            "Gamma": 2
+          }
+        ]
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.8,
+        "surface_counts": [
+          {
+            "index": 20,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 21,
+            "T": 2,
+            "Gamma": 4
+          },
+          {
+            "index": 22,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 23,
+            "T": 3,
+            "Gamma": 4
+          },
+          {
+            "index": 24,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 25,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 26,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 27,
+            "T": 4,
+            "Gamma": 4
+          }
+        ]
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.9,
+        "surface_counts": [
+          {
+            "index": 24,
+            "T": 4,
+            "Gamma": 4
+          },
+          {
+            "index": 25,
+            "T": 6,
+            "Gamma": 6
+          },
+          {
+            "index": 26,
+            "T": 5,
+            "Gamma": 6
+          },
+          {
+            "index": 27,
+            "T": 6,
+            "Gamma": 6
+          }
+        ]
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.95,
+        "surface_counts": [
+          {
+            "index": 26,
+            "T": 1,
+            "Gamma": 4
+          },
+          {
+            "index": 27,
+            "T": 4,
+            "Gamma": 4
+          }
+        ]
+      }
+    ],
+    "count_encoding": "Missing surface indices have T=Gamma=0; indices refer to that file run surfaces."
+  },
+  "host": {
+    "system": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "machine": "x86_64",
+    "packages": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1",
+      "matplotlib": "3.11.2",
+      "contourpy": "1.4.0",
+      "numba": "0.68.1",
+      "pytest": "9.2.0",
+      "black": "26.10.1"
+    }
+  }
+}

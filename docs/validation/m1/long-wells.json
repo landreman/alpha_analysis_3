@@ -1,0 +1,117 @@
+{
+  "data_sha256": "49eec0d9ff88fb52cc377be7d190da35b6815210baa36c5daee2bea7f6ab3fbd",
+  "source_hashes": {
+    "__init__.py": "cad41e41dc02a6bb1b517bbf8ebb463a8401eadd5a1a66332a86e57405ed2ddf",
+    "boozer_field.py": "1132eeb1e3e528dde2bfd6b5490d0e118cc02a05852de68a60e1c4423e1ad2ac",
+    "chains.py": "70d7ec0ea2c3659a26e7cf2c148ce9425754c5640d9df242c586fbde05b34606",
+    "conventions.py": "6240892864f492464f89cfb1bff80a39ba3588e1a5ed3b1650c5ea02ed7a0c58",
+    "diagnostics.py": "39c31bb00a6e92af605fbf5545dd7c629907eced725d0ad7f2bb7f253dfffe0c",
+    "ledger.py": "15dd8f9ed423e2a9c116bf785f3cae0165ddf27b04602742c9daad918c54723b",
+    "ridge.py": "721ca2aca9c52d1485e9fc252b0d1700a88883cbc77f3eb9a20eabb7cb9397ca",
+    "tables.py": "cc94011f9f48d35b0ccee1c635f729d0a87db92d551c86cc2fba9b409f95d4e4",
+    "wells.py": "7e8cf01d78df4821b861f74349225dcf92f93d3ad9a735c4fdfc08e2365190b5"
+  },
+  "probes": [
+    {
+      "s": 0.44608695652173913,
+      "theta": 9.935229442252941,
+      "phi": 6.903643850431844,
+      "b": 11.167688974652412,
+      "lambda_n": 0.8,
+      "scans": [
+        {
+          "periods": 48,
+          "samples_per_period": 128,
+          "status": 2,
+          "seconds": 0.011873157999843897
+        },
+        {
+          "periods": 64,
+          "samples_per_period": 128,
+          "status": 2,
+          "seconds": 0.009937415999957011
+        },
+        {
+          "periods": 256,
+          "samples_per_period": 128,
+          "status": 1,
+          "seconds": 0.03983553600005507,
+          "exit_index": 91,
+          "exit_periods": 73.80031579151934,
+          "exact_exit_height": 11.169848845660296,
+          "exact_largest_prior_height": 11.163170847938055,
+          "J": 464.9265791978496,
+          "K": 4065.877271452003,
+          "relative_J_order32": 3.782571900146081e-08,
+          "relative_K_order32": 1.603030441721387e-08
+        },
+        {
+          "periods": 128,
+          "samples_per_period": 512,
+          "status": 1,
+          "seconds": 0.04149430500001472,
+          "exit_index": 92,
+          "exit_periods": 73.80031579151941,
+          "exact_exit_height": 11.16984884566029,
+          "exact_largest_prior_height": 11.163170847938055,
+          "J": 464.9265791978445,
+          "K": 4065.8772714533807,
+          "relative_J_order32": 3.772233259091706e-08,
+          "relative_K_order32": 1.5975769374065862e-08
+        }
+      ]
+    },
+    {
+      "s": 0.8295652173913044,
+      "theta": 15.982749366888166,
+      "phi": 13.057817282260391,
+      "b": 11.81493985662058,
+      "lambda_n": 0.95,
+      "scans": [
+        {
+          "periods": 48,
+          "samples_per_period": 128,
+          "status": 2,
+          "seconds": 0.008468709999988278
+        },
+        {
+          "periods": 64,
+          "samples_per_period": 128,
+          "status": 2,
+          "seconds": 0.0096405379999851
+        },
+        {
+          "periods": 256,
+          "samples_per_period": 128,
+          "status": 1,
+          "seconds": 0.04413203700005397,
+          "exit_index": 150,
+          "exit_periods": 114.84383315512493,
+          "exact_exit_height": 11.815821595252006,
+          "exact_largest_prior_height": 11.81259417762997,
+          "J": 863.542658658285,
+          "K": 5283.290112414945,
+          "relative_J_order32": 2.62144698837119e-07,
+          "relative_K_order32": 1.2056521825343225e-07
+        },
+        {
+          "periods": 128,
+          "samples_per_period": 512,
+          "status": 1,
+          "seconds": 0.044657755999878646,
+          "exit_index": 150,
+          "exit_periods": 114.84383315512498,
+          "exact_exit_height": 11.815821595252004,
+          "exact_largest_prior_height": 11.81259417762997,
+          "J": 863.5426586582835,
+          "K": 5283.290112418051,
+          "relative_J_order32": 2.621446995032528e-07,
+          "relative_K_order32": 1.2056448239761153e-07
+        }
+      ]
+    }
+  ],
+  "total_seconds": 0.8894402670000545,
+  "peak_rss_gb": 0.132657152,
+  "snapshots": []
+}
