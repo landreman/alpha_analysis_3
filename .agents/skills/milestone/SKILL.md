@@ -5,6 +5,7 @@ description: Implement one alpha_analysis_3 milestone from docs/DESIGN.md sectio
 
 # Implement one milestone
 
+First make sure the latest version of the "main" branch has been pulled from github.
 Read root `AGENTS.md`, `docs/STATUS.md`, the selected milestone in `docs/DESIGN.md`
 section 9, and `.claude/commands/review-milestone.md`. Paths are repository-relative.
 For "next", select the first incomplete **M0–M5** milestone whose dependencies are
@@ -54,17 +55,12 @@ draft PR, marking it ready after checks, and requesting and responding to the co
 Claude review. Do not ask again for those routine steps. It does not authorize merging or
 starting another milestone.
 
-Use the PR template. Lead with the concrete behavior and purpose, then map each
-acceptance criterion to its named test or evidence. Include errors, unresolved scope,
-timings, reverted mutations and deviations. Explain problems in plain language.
+In the PR text, lead with the concrete behavior and purpose, then map each
+acceptance criterion to its named test/evidence. Include errors, unresolved scope,
+timings, reverted mutations, and deviations. Explain problems in plain language;
+if the algorithm looks unlikely to meet the f/runtime target, say so explicitly.
 
-In the PR, include a human-readable summary of what this PR is about and for, and any
-problems that arose with achieving the goals for the milestone. For this part of the PR
-text, the text should not sound like AI slop. Do not assume the human reader knows the
-jargon - explain any concepts in simple terms that the reader needs to know. If the planned
-design seems unlikely to succeed, in terms of computing the metric f for the set of boozmn
-files in a reasonable wallclock time, such that we should re-think the overall design plan,
-point this out and explain why.
+In the PR, include an explicit section with a human-readable summary of what this PR is about and for, and any problems that arose with achieving the goals for the milestone. For this part of the PR text, the text should not sound like AI slop. Do not assume the human reader knows the jargon - explain any concepts in simple terms that the reader needs to know. If the planned design seems unlikely to succeed, in terms of computing the metric f for the set of boozmn files in a reasonable wallclock time, such that we should re-think the overall design plan, point this out and explain why.
 
 Wait for GitHub `Tests` on the final code revision and fix failures. When the milestone
 gates pass, run `gh pr ready <number>` to trigger Claude Code Review; do not wait for
