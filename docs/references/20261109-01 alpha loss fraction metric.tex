@@ -1,0 +1,231 @@
+%% LyX 2.3.6.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage{mathptmx}
+\renewcommand{\familydefault}{\rmdefault}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+\usepackage{babel}
+\usepackage{esint}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\newcommand{\vect}[1]{\mbox{\boldmath $#1$}}
+
+\makeatother
+
+\begin{document}
+\title{Alpha-particle loss fraction metric}
+\author{Matt Landreman}
+
+\maketitle
+The fraction of lost alpha particles is
+\begin{equation}
+f=\frac{N}{D},\label{eq:f_def}
+\end{equation}
+where
+\begin{equation}
+N=\int d^{3}x\int d^{3}v\,S\Theta,
+\end{equation}
+\begin{equation}
+D=\int d^{3}x\int d^{3}v\,S,
+\end{equation}
+$\int d^{3}x$ is an integral over the plasma volume, $S$ is the
+relative local rate at which alpha particles are born, and $\Theta$
+is an indicator function which is 1 if the alpha born at this location
+is lost before thermalization, 0 otherwise. We will compute $\Theta$
+by following contours of the adiabatic invariant $J=\int v_{||}d\ell$.
+We will assume particles conserve $J$ aside from transitions between
+trapping classes, at which point $J$ changes discontinuously. Particles
+can be followed through a transition by considering all the possible
+classes they may transition into. If a point in phase space can reach
+the plasma boundary through transitions in this way and otherwise
+following constant-$J$ contours, we will set $\Theta=1$, otherwise
+$\Theta=0$. For a particle that never bounces, we will consdier $\Theta=0$.
+
+We only need to know $S$ up to a constant because if it is multiplied
+by any scale factor, the scale factor cancels out between numerator
+and denominator.
+
+The source has the form
+\begin{equation}
+S=\delta\left(W-W_{0}\right)h\left(\rho\right)
+\end{equation}
+where
+\begin{equation}
+W=\frac{v^{2}}{2}
+\end{equation}
+is the specific kinetic energy, $W_{0}=3.5$ MeV$/m_{\alpha}$ is
+the birth specific energy, $\rho$ is a surface label that ranges
+over $[0,1]$, and $h$ is some function of it. 
+
+We convert the spatial variables to coordinates $\left(\rho,\alpha,\zeta\right)$
+where
+\begin{equation}
+\alpha=\theta-\iota\zeta
+\end{equation}
+is a field line label and $\left(\theta,\zeta\right)$ are any straight-field-line
+coordinates. We have
+\begin{equation}
+\mathbf{B}=\nabla\psi\times\nabla\theta+\iota\nabla\zeta\times\nabla\psi=\nabla\psi\times\nabla\alpha,
+\end{equation}
+where $2\pi\psi$ is the toroidal flux. The Jacobian of the coordinate
+transformation is
+\begin{equation}
+\sqrt{g}=\frac{1}{\nabla\rho\times\nabla\alpha\cdot\nabla\zeta}=\frac{d\psi}{d\rho}\frac{1}{\nabla\psi\times\nabla\alpha\cdot\nabla\zeta}=\frac{d\psi}{d\rho}\frac{1}{\mathbf{B}\cdot\nabla\zeta}
+\end{equation}
+so
+\begin{equation}
+\int d^{3}x=\int_{0}^{1}d\rho\int_{0}^{2\pi}d\alpha\int_{0}^{2\pi}d\zeta\left|\frac{d\psi}{d\rho}\frac{1}{\mathbf{B}\cdot\nabla\zeta}\right|.
+\end{equation}
+
+For the denominator $D$, the integrand is isotropic so we can work
+in terms of spherical coordinates in velocity space:
+\begin{equation}
+\int d^{3}v=4\pi\int_{0}^{\infty}dv\;v^{2}=4\pi\int_{0}^{\infty}dW\,\sqrt{2W}.
+\end{equation}
+Thus, the denominator is
+\begin{equation}
+D=4\pi\sqrt{2W_{0}}\int_{0}^{1}d\rho\,h\int_{0}^{2\pi}d\alpha\int_{0}^{2\pi}d\zeta\left|\frac{d\psi}{d\rho}\frac{1}{\mathbf{B}\cdot\nabla\zeta}\right|.
+\end{equation}
+If we notice
+\begin{equation}
+\frac{dV}{d\rho}=\frac{d}{d\rho}\left(\int d^{3}x\right)=\int_{0}^{2\pi}d\alpha\int_{0}^{2\pi}d\zeta\left|\frac{d\psi}{d\rho}\frac{1}{\mathbf{B}\cdot\nabla\zeta}\right|
+\end{equation}
+then another expression for $D$ is
+\begin{equation}
+D=4\pi\sqrt{2W_{0}}\int_{0}^{1}d\rho\,h\frac{dV}{d\rho}.
+\end{equation}
+
+Now we turn to the numerator $N$. As shown in the appendix, the velocity
+integral can be written
+\begin{equation}
+\int d^{3}v=\sum_{\sigma}\int_{0}^{2\pi}d\vartheta\int_{0}^{\infty}dW\int_{0}^{W/B}d\mu\frac{B}{\left|v_{||}\right|},\label{eq:d3v}
+\end{equation}
+where $\sigma=\mbox{sign}\left(v_{||}\right)=\pm1$, $\vartheta$
+is the gyrophase, $W=v^{2}/2$ is again the specific kinetic energy,
+and $\mu=v_{\perp}^{2}/\left(2B\right)$ is the magnetic moment. Since
+we are using guiding-center calculations to determine $\Theta$, nothing
+in the integrand depends on $\vartheta$. Therefore
+\begin{equation}
+N=2\pi\int_{0}^{1}d\rho\,h\left|\frac{d\psi}{d\rho}\right|\int_{0}^{2\pi}d\alpha\int_{0}^{2\pi}d\zeta\sum_{\sigma}\int_{0}^{W_{0}/B}d\mu\frac{\Theta}{\left|v_{||}\mathbf{b}\cdot\nabla\zeta\right|}.
+\end{equation}
+We can pull the $\mu$ integral outside the others as long as the
+ranges of integration are adjusted to cover the same region of phase
+space:
+\begin{equation}
+N=2\pi\sum_{\sigma}\sum_{\mathrm{wells}}\int_{0}^{W_{0}/B_{\min}}d\mu\int_{0}^{1}d\rho\,h\left|\frac{d\psi}{d\rho}\right|\int d\alpha\int d\zeta\frac{\Theta}{\left|v_{||}\mathbf{b}\cdot\nabla\zeta\right|}.
+\end{equation}
+Here, the notation for the range of the $\alpha$ and $\zeta$ integrals
+has been left vague deliberately - these integrals and the sum over
+wells should be done such that phase space is weighted and counted
+properly, without over-counting or under-counting any wells.
+
+Now let us change variables from $\mu$ to $\lambda_{n}$, where $\lambda_{n}$
+is defined via
+\begin{equation}
+B_{\mathrm{bounce}}=B_{\min}+\left(B_{\max}-B_{\min}\right)\lambda_{n}.
+\end{equation}
+To make this change of variables we first note
+\begin{equation}
+\frac{v^{2}}{2}=\frac{v_{||}^{2}}{2}+\frac{v_{\perp}^{2}}{2}
+\end{equation}
+so
+\begin{equation}
+W=\frac{v_{||}^{2}}{2}+\mu B.
+\end{equation}
+At a bounce point, we have $v_{||}\to0$ and $B\to B_{\mathrm{bounce}}$,
+and we always have $W=W_{0}$, so
+\begin{equation}
+W_{0}=\mu B_{\mathrm{bounce}}.
+\end{equation}
+Hence,
+\begin{equation}
+W_{0}=\left[B_{\min}+\left(B_{\max}-B_{\min}\right)\lambda_{n}\right]\mu.
+\end{equation}
+Differentiating,
+\begin{equation}
+0=\left[B_{\min}+\left(B_{\max}-B_{\min}\right)\lambda_{n}\right]d\mu+\mu\left(B_{\max}-B_{\min}\right)d\lambda_{n},
+\end{equation}
+so
+\begin{equation}
+\frac{d\mu}{d\lambda_{n}}=-\mu\frac{\left(B_{\max}-B_{\min}\right)}{B_{\min}+\left(B_{\max}-B_{\min}\right)\lambda_{n}}=-W_{0}\frac{\left(B_{\max}-B_{\min}\right)}{\left[B_{\min}+\left(B_{\max}-B_{\min}\right)\lambda_{n}\right]^{2}}.
+\end{equation}
+We only need to integrate over $\lambda_{n}\in\left[0,1\right]$ because
+passing particles are not lost and so have $\Theta=0$. Thus,
+\begin{equation}
+N=2\pi W_{0}\sum_{\sigma}\sum_{\mathrm{wells}}\int_{0}^{1}d\lambda_{n}\frac{\left(B_{\max}-B_{\min}\right)}{\left[B_{\min}+\left(B_{\max}-B_{\min}\right)\lambda_{n}\right]^{2}}\int_{0}^{1}d\rho\,h\left|\frac{d\psi}{d\rho}\right|\int d\alpha\int d\zeta\frac{\Theta}{\left|v_{||}\mathbf{b}\cdot\nabla\zeta\right|}.
+\end{equation}
+Defining the birth speed $v_{0}$ using 
+\begin{equation}
+W_{0}=\frac{v_{0}^{2}}{2}
+\end{equation}
+and noting
+\begin{equation}
+\left|v_{||}\right|=v_{0}\sqrt{1-B/B_{\mathrm{bounce}}}
+\end{equation}
+then
+\begin{equation}
+N=\pi v_{0}\sum_{\sigma}\sum_{\mathrm{wells}}\int_{0}^{1}d\lambda_{n}\frac{\left(B_{\max}-B_{\min}\right)}{B_{\mathrm{bounce}}^{2}}\int_{0}^{1}d\rho\,h\left|\frac{d\psi}{d\rho}\right|\int d\alpha\int d\zeta\frac{\Theta}{\left|\mathbf{b}\cdot\nabla\zeta\right|\sqrt{1-B/B_{\mathrm{bounce}}}}.
+\end{equation}
+
+An expression for the alpha loss fraction is then
+\begin{equation}
+f=\frac{\pi v_{0}\sum_{\sigma}\sum_{\mathrm{wells}}\int_{0}^{1}d\lambda_{n}\frac{\left(B_{\max}-B_{\min}\right)}{B_{\mathrm{bounce}}^{2}}\int_{0}^{1}d\rho\,h\left|\frac{d\psi}{d\rho}\right|\int d\alpha\int d\zeta\frac{\Theta}{\left|\mathbf{b}\cdot\nabla\zeta\right|\sqrt{1-B/B_{\mathrm{bounce}}}}}{4\pi\sqrt{2W_{0}}\int_{0}^{1}d\rho\,h\int_{0}^{2\pi}d\alpha\int_{0}^{2\pi}d\zeta\left|\frac{d\psi}{d\rho}\frac{1}{\mathbf{B}\cdot\nabla\zeta}\right|}.
+\end{equation}
+If $\Theta$ is evaluated using $J$ contours, as we are proposing,
+then $\Theta$ will be independent of $\sigma$ so we can replace
+$\sum_{\sigma}\to2$. Then, a final expression for the loss fraction
+becomes
+\begin{equation}
+f=\frac{\sum_{\mathrm{wells}}\int_{0}^{1}d\lambda_{n}\frac{\left(B_{\max}-B_{\min}\right)}{B_{\mathrm{bounce}}^{2}}\int_{0}^{1}d\rho\,h\left|\frac{d\psi}{d\rho}\right|\int d\alpha\int d\zeta\frac{\Theta}{\left|\mathbf{b}\cdot\nabla\zeta\right|\sqrt{1-B/B_{\mathrm{bounce}}}}}{2\int_{0}^{1}d\rho\,h\int_{0}^{2\pi}d\alpha\int_{0}^{2\pi}d\zeta\left|\frac{d\psi}{d\rho}\frac{1}{\mathbf{B}\cdot\nabla\zeta}\right|}.
+\end{equation}
+
+As already emphasized, the sum over wells and the integration ranges
+should be interpreted as covering phase space once, and not over-counting
+or under-counting any wells, such that the overall weight on phase
+space is equivalent to the original weight in equation (\ref{eq:f_def}).
+
+Nothing in the calculation changes if we use $\theta$ as an integration
+coordinate instead of $\alpha$ - we would just need to evaluate the
+integrands as functions of $\theta$ then instead of as functions
+of $\alpha$. We could also evaluate the numerator with an integral
+$\int d\alpha$ while evaluating the denominator with an integral
+$\int d\theta$.
+
+\section{Appendix: velocity-space integral}
+
+Here we derive (\ref{eq:d3v}). First observe that $\left(v_{\perp},\vartheta,v_{||}\right)$
+are cylindrical coordinates for velocity space, so
+\begin{equation}
+\int d^{3}v=\int_{0}^{2\pi}d\vartheta\int_{-\infty}^{\infty}dv_{||}\int_{0}^{\infty}dv_{\perp}v_{\perp}.
+\end{equation}
+Then using $\mu=v_{\perp}^{2}/\left(2B\right)$, 
+\begin{equation}
+2B\;d\mu=2v_{\perp}\;dv_{\perp}
+\end{equation}
+so
+\begin{equation}
+\int d^{3}v=\int_{0}^{2\pi}d\vartheta\int_{-\infty}^{\infty}dv_{||}\int_{0}^{\infty}d\mu\,B.
+\end{equation}
+We now write the energy as
+\begin{equation}
+W=\frac{v_{||}^{2}}{2}+\mu B
+\end{equation}
+so at fixed $\mu$ and position
+\begin{equation}
+dW=v_{||}dv_{||}.
+\end{equation}
+Hence
+\begin{eqnarray}
+\int d^{3}v & = & \sum_{\sigma}\int_{0}^{2\pi}d\vartheta\int_{0}^{\infty}d\mu\int_{\mu B}^{\infty}dW\frac{B}{\left|v_{||}\right|}\label{eq:d3v_integral}\\
+ & = & \sum_{\sigma}\int_{0}^{2\pi}d\vartheta\int_{0}^{\infty}dW\int_{0}^{W/B}d\mu\frac{B}{\left|v_{||}\right|}.\nonumber 
+\end{eqnarray}
+
+\end{document}

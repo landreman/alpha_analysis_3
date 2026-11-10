@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "source_repository": "https://github.com/landreman/alpha_analysis",
+  "source_revision": "95519166d4eeefc25f1eca331c8d706961174f39",
+  "lambda_n": [
+    0.05,
+    0.1,
+    0.5,
+    0.8,
+    0.9,
+    0.95
+  ],
+  "pitch_definition": "b = B_min_global + lambda_n * (B_max_global - B_min_global)",
+  "extrema_scope": "Radially global extrema of B over all flux surfaces; the legacy values are numerical estimates from the original repository for reproducible comparisons. Production runs record their own extrema and the actual b values.",
+  "source_profile": "h(rho) = (1 - rho**2)**4 with s = rho**2",
+  "files": [
+    {
+      "id": "PCA",
+      "file": "boozmn_20260402-01-038_Ax_PCA_20dofs_allNfp_aspect6_eval000290_low_resolution.nc",
+      "sha256": "49eec0d9ff88fb52cc377be7d190da35b6815210baa36c5daee2bea7f6ab3fbd",
+      "bytes": 1036720,
+      "nfp": 4,
+      "legacy_B_min_estimate": 7.715684270822196,
+      "legacy_B_max_estimate": 12.030690150609956
+    },
+    {
+      "id": "TURBO",
+      "file": "boozmn_20260402-01-178_TURBO_Garabedian_mpol1_xmin0p1_allNfp_aspect6_eval000155.nc",
+      "sha256": "ec583795826f7b9cb213d0c63977ecc03b1e72e98bcc53de9a0621f17934202e",
+      "bytes": 1036720,
+      "nfp": 4,
+      "legacy_B_min_estimate": 7.342416966461364,
+      "legacy_B_max_estimate": 12.032438296028294
+    },
+    {
+      "id": "DMercFail",
+      "file": "boozmn_20260406-01-262-Ax_nfp4_Garabedian_mpol2_ntor2_minx0_allNfp_aspect10_DMercFail_m0p3_eval000323_low_resolution.nc",
+      "sha256": "43346b456ee4b2654b2d6d13e9d85837ab7051de1b015b5a763c55f8007bbda7",
+      "bytes": 1036720,
+      "nfp": 4,
+      "legacy_B_min_estimate": 5.04046589307238,
+      "legacy_B_max_estimate": 12.050343540204448
+    },
+    {
+      "id": "d23p4",
+      "file": "boozmn_d23p4_tm_ns51_mbooz16_nbooz16.nc",
+      "sha256": "c99156e12f828b58798b959d7768307aeb5415900f0860b4e3825156bfc4f36c",
+      "bytes": 1036720,
+      "nfp": 5,
+      "legacy_B_min_estimate": 2.2930590216460347,
+      "legacy_B_max_estimate": 3.3705889032335437
+    },
+    {
+      "id": "n3are",
+      "file": "boozmn_n3are_R7.75B5.7_mbooz18_nbooz12.nc",
+      "sha256": "1b2f8b945f3bee66c473b1c0335fd072e30e183303ebafc2d3776f1d1c29e660",
+      "bytes": 852952,
+      "nfp": 3,
+      "legacy_B_min_estimate": 4.909260723175189,
+      "legacy_B_max_estimate": 7.069800279009321
+    }
+  ]
+}

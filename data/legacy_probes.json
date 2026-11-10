@@ -1,0 +1,54 @@
+{
+  "scope": "Historical numerical comparison inputs; recheck roots, actions and terminals independently. Not new-repository acceptance evidence or continuous-field certificates.",
+  "source_repository": "https://github.com/landreman/alpha_analysis",
+  "source_revision": "a00b42abde92d3886562b4f46388e8b52710a114",
+  "source_sha256": {
+    "r3-contour-matrix.json": "2fb21ebbf83c2651175da129d0393cd3123d44e740680d91d448787a85a619b0",
+    "r3-5-feasibility-matrix.json": "4c9a6665fec20a3293929f750c7ade55b7a0f245c2596ac3cdd21870c5cc6fea"
+  },
+  "contour_probes": [
+    {
+      "file": "boozmn_20260406-01-262-Ax_nfp4_Garabedian_mpol2_ntor2_minx0_allNfp_aspect10_DMercFail_m0p3_eval000323_low_resolution.nc",
+      "lambda_n": 0.8,
+      "b": 10.648368010778036,
+      "seed": {
+        "s": 0.3,
+        "alpha": 0.0,
+        "zeta_in": 0.0449102869859216,
+        "zeta_out": 1.4059430620098394,
+        "A": 11.469132237222054,
+        "error_A": 1.1743081084943141e-07
+      },
+      "r3_status": "UNKNOWN",
+      "r3_5_numerical_terminal": "INACCESSIBLE"
+    },
+    {
+      "file": "boozmn_d23p4_tm_ns51_mbooz16_nbooz16.nc",
+      "lambda_n": 0.1,
+      "b": 2.4008120098047856,
+      "seed": {
+        "s": 0.3,
+        "alpha": 0.0,
+        "zeta_in": 0.5100651968249966,
+        "zeta_out": 0.5579555674864705,
+        "A": 0.00488717089566487,
+        "error_A": 4.539836491932746e-15
+      },
+      "r3_status": "UNKNOWN",
+      "r3_5_numerical_terminal": "ACCESSIBLE"
+    }
+  ],
+  "generic_event": {
+    "file_id": "DMercFail",
+    "b": 10.648368010778036,
+    "parameter_s_alpha": [
+      0.8,
+      -0.1577992744671513
+    ],
+    "action_estimates": {
+      "child_1": 11.202008500006372,
+      "parent": 22.327691266337105,
+      "child_3": 11.125682766330735
+    }
+  }
+}

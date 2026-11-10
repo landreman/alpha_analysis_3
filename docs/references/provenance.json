@@ -1,0 +1,26 @@
+{
+  "source_repository": "https://github.com/landreman/alpha_analysis",
+  "source_revision": "95519166d4eeefc25f1eca331c8d706961174f39",
+  "verified_unchanged": [
+    {
+      "path": "docs/references/20261109-01 alpha loss fraction metric.tex",
+      "origin": "Researcher-supplied original TeX note, 2026-11-09",
+      "sha256": "4a1072205e6160ca1fdc08c2038af98f69acb8d191fdefaea7c416feb79a0d95"
+    }
+  ],
+  "copied_then_maintained": [
+    {
+      "path": "src/alpha_analysis_3/boozer_field.py",
+      "origin": "alpha_analysis/boozer_field.py",
+      "origin_sha256": "1132eeb1e3e528dde2bfd6b5490d0e118cc02a05852de68a60e1c4423e1ad2ac"
+    },
+    {
+      "path": "prototype/proto_f.py",
+      "origin": "Design-chat prototype of 2026-11-09, import paths adapted to this repository"
+    },
+    {
+      "path": "prototype/proto_f2.py",
+      "origin": "Design-chat prototype of 2026-11-09, unchanged"
+    }
+  ]
+}

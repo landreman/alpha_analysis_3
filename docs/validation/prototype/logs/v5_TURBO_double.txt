@@ -1,0 +1,18 @@
+[TURBO] geometry: 48 surfaces (s in [0.02,1.0]), 12610 ridge nodes, 46 closed + 14 open arcs, 92 unpartnered nodes, B in [7.3425,12.0324], 7.5 s
+  b=7.5770: cells=562 sheets=2 unknown=0 {} T-points=0 Gamma_max=0 (mismatch 0 surf, 0 multi-jump edges) trans=0/0  reachable: h=1: 0.822..0.822 | h=(1-rho^2)^4: 0.365..0.365  0.1s
+      ledger ratio: h=1: 0.9901, h=(1-rho^2)^4: 1.1139 | unknown weight fraction: h=1: 0.0000, h=(1-rho^2)^4: 0.0000
+  b=7.8115: cells=1498 sheets=9 unknown=3 {'uncovered-top': 1, '1-cuts': 2} T-points=0 Gamma_max=2 (mismatch 1 surf, 0 multi-jump edges) trans=1/2  reachable: h=1: 0.922..0.929 | h=(1-rho^2)^4: 0.734..0.734  0.2s
+      ledger ratio: h=1: 0.9918, h=(1-rho^2)^4: 1.0110 | unknown weight fraction: h=1: 0.0051, h=(1-rho^2)^4: 0.0000 | mismatch (s,T,Gamma): [(1.0, 0, 2)]
+  b=9.6874: cells=12203 sheets=84 unknown=83 {'frontier': 5, 'uncovered-top': 78} T-points=0 Gamma_max=0 (mismatch 0 surf, 0 multi-jump edges) trans=0/0  reachable: h=1: 0.090..0.091 | h=(1-rho^2)^4: 0.000..0.004  1.3s
+      ledger ratio: h=1: 1.0009, h=(1-rho^2)^4: 1.0023 | unknown weight fraction: h=1: 0.0011, h=(1-rho^2)^4: 0.0040
+      graph: 36236 nodes (37052 without the cap), 3 capped cells, max level 2; worst: s=0.385 regular J=[53.3,53.3] sheet dJ=2.4e-06 level=2 n_exit=[np.int64(7), np.int64(7), np.int64(7), np.int64(7)]; s=0.406 sub J=[53.3,53.3] sheet dJ=2.4e-06 level=2 n_exit=[np.int64(7), np.int64(7)]; s=0.385 regular J=[53.3,53.3] sheet dJ=2.4e-06 level=1 n_exit=[np.int64(7), np.int64(7), np.int64(7), np.int64(7)]
+  b=11.0944: cells=6882 sheets=129 unknown=28 {'1-cuts': 17, '3-cuts': 11} T-points=44 Gamma_max=46 (mismatch 2 surf, 22 multi-jump edges) trans=232/766  reachable: h=1: 0.192..0.214 | h=(1-rho^2)^4: 0.001..0.081  0.8s
+      ledger ratio: h=1: 0.9985, h=(1-rho^2)^4: 0.9942 | unknown weight fraction: h=1: 0.0220, h=(1-rho^2)^4: 0.0800 | mismatch (s,T,Gamma): [(0.374, 3, 4), (0.395, 3, 4)]
+      graph: 13787 nodes (15475 without the cap), 5 capped cells, max level 2; worst: s=0.656 regular J=[32.3,32.3] sheet dJ=0.00012 level=2 n_exit=[np.int64(3), np.int64(3), np.int64(3), np.int64(3)]; s=0.656 regular J=[32.3,32.3] sheet dJ=0.00012 level=2 n_exit=[np.int64(3), np.int64(3), np.int64(3), np.int64(3)]; s=0.656 regular J=[32.3,32.3] sheet dJ=0.00012 level=2 n_exit=[np.int64(3), np.int64(3), np.int64(3), np.int64(3)]
+  b=11.5634: cells=2876 sheets=111 unknown=32 {'1-cuts': 4, 'unknown-node': 26, '3-cuts': 2} T-points=38 Gamma_max=44 (mismatch 3 surf, 19 multi-jump edges) trans=152/481  reachable: h=1: 0.979..1.000 | h=(1-rho^2)^4: 0.910..1.000  0.4s
+      ledger ratio: h=1: 0.9030, h=(1-rho^2)^4: 0.6639 | unknown weight fraction: h=1: 0.0141, h=(1-rho^2)^4: 0.0631 | mismatch (s,T,Gamma): [(0.625, 2, 4), (0.646, 2, 4), (0.666, 2, 4)]
+  b=11.7979: cells=1387 sheets=48 unknown=8 {'1-cuts': 6, '3-cuts': 2} T-points=22 Gamma_max=22 (mismatch 0 surf, 13 multi-jump edges) trans=93/265  reachable: h=1: 0.985..1.000 | h=(1-rho^2)^4: 0.945..1.000  0.2s
+      ledger ratio: h=1: 0.9980, h=(1-rho^2)^4: 1.0242 | unknown weight fraction: h=1: 0.0148, h=(1-rho^2)^4: 0.0552
+  [h=1] f_lower=0.0831 f_upper=0.0849 trapped fraction=0.3709 unknown weight=0.0017
+  [h=(1-rho^2)^4] f_lower=0.0024 f_upper=0.0056 trapped fraction=0.2817 unknown weight=0.0032
+  (48 slices in 38.2s, 0.80s/slice; geometry 7.5s; total 45.8s; 22 surface mismatches over all slices)
