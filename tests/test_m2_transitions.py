@@ -120,6 +120,8 @@ def test_dmercfail_generic_event():
     )
     assert event.resolved, event.reason
     found = event.point[0] - sf.iota * event.point[1] / sf.nfp
+    partner_alpha = event.partner[0] - sf.iota * event.partner[1] / sf.nfp
+    assert partner_alpha == pytest.approx(found, abs=1e-12)
     assert abs(found - alpha) < 0.005
     assert event.parent == pytest.approx(record["action_estimates"]["parent"], rel=2e-5)
     assert event.parent == pytest.approx(event.child_1 + event.child_3, rel=2e-6)

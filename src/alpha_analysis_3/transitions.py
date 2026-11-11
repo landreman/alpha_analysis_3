@@ -47,6 +47,8 @@ def sample_states(surface, points, b, order=64, max_periods=256):
     than a state on the wrong extremum. Temporary chains are
     bounded by the same 256-period ceiling as the production geometry.
     """
+    if not np.isfinite(b) or b <= 0 or not 1 <= max_periods <= 256:
+        raise ValueError("positive bounce field and 1..256 period ceiling required")
     points = np.asarray(points, float).reshape(-1, 2).copy()
     if len(points) > 4096:
         raise MemoryError("transition sample batch exceeds 4096 nodes")
@@ -64,12 +66,12 @@ def sample_states(surface, points, b, order=64, max_periods=256):
     good = (surface.exact(points[:, 0], points[:, 1], 2) < 0) & (
         np.abs(surface.exact(points[:, 0], points[:, 1], 1)) <= 1e-8
     )
-    ids = np.flatnonzero(good)
     H = surface.b(points[:, 0], points[:, 1])
+    ids = np.flatnonzero(good & (H > b))
     result = [
         State(
             p,
-            FAILED,
+            INACTIVE if valid and h <= b else FAILED,
             np.nan,
             np.nan,
             np.nan,
@@ -79,7 +81,7 @@ def sample_states(surface, points, b, order=64, max_periods=256):
             np.array([np.nan]),
             float(h),
         )
-        for p, h in zip(points, H)
+        for p, h, valid in zip(points, H, good)
     ]
     if not len(ids):
         return result
@@ -87,7 +89,9 @@ def sample_states(surface, points, b, order=64, max_periods=256):
     had = surface.DB is not None
     surface.restore_derivatives()
     try:
-        chain = trace_chains(surface, selected[:, 0], selected[:, 1], periods=2)
+        chain = trace_chains(
+            surface, selected[:, 0], selected[:, 1], periods=min(2, max_periods)
+        )
         well, chain, _ = adaptive_wells_at_pitch(
             surface,
             selected[:, 0],
@@ -250,6 +254,8 @@ def locate_transition(surface, left, right, b, tolerance=1e-8, order=64):
         or float(critical_sf.exact(*angles, 2)) >= 0
     ):
         return failure("critical starting maximum did not polish", width)
+    if float(critical_sf.exact(*angles)) <= b + 64 * np.finfo(float).eps * max(b, 1.0):
+        return failure("transition meets the starting activity boundary", width)
     point = point.copy()
     point[-2:] = angles
     z = float(long.max_z[k])
@@ -270,6 +276,9 @@ def locate_transition(surface, left, right, b, tolerance=1e-8, order=64):
     if abs(float(critical_sf.exact(*y, 1))) > 1e-8:
         return failure("critical interior maximum did not polish", width)
     partner = np.r_[point[0], y] if radial else y
+    height_residual = float(critical_sf.exact(*y)) - b
+    if not np.isfinite(height_residual) or abs(height_residual) > 1e-7 * max(b, 1.0):
+        return failure("critical barrier exceeds table interpolation tolerance", width)
     return Transition(
         True,
         point,
@@ -279,7 +288,7 @@ def locate_transition(surface, left, right, b, tolerance=1e-8, order=64):
         child_action,
         width,
         "",
-        float(critical_sf.exact(*y)) - b,
+        height_residual,
     )
 
 
