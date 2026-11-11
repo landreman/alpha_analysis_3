@@ -8,7 +8,7 @@ repository's M0–M5 milestones apply; the milestones of `landreman/alpha_analys
 | --- | --- | --- | --- | --- |
 | M0 | Repository, scientific contract, data and workflow | None | [x] | [Bootstrap checks](validation/bootstrap.md); [Tests run 42825860916](https://github.com/landreman/alpha_analysis_3/actions/runs/42825860916) |
 | M1 | Pitch-independent geometry and the per-pitch ledger | M0 | [x] | [Post-ADR evidence](validation/m1/adaptive.md); [PR #1](https://github.com/landreman/alpha_analysis_3/pull/1) |
-| M2 | Transitions, cells and complete coverage | M1 | [ ] | |
+| M2 | Transitions, cells and complete coverage | M1 | [ ] | [Draft PR #2](https://github.com/landreman/alpha_analysis_3/pull/2); [evidence and blocker](validation/m2/README.md); proposed [ADR 0002](adr/0002-fold-well-identity.md) |
 | M3 | Reachability and the bracket: first complete coarse f | M2 | [ ] | |
 | M4 | Outer integral, axis and convergence: accuracy acceptance | M3 | [ ] | |
 | M5 | Speed and robustness within the runtime target | M4 | [ ] | |
@@ -22,6 +22,16 @@ use 64 periods, only capped rows double through 128/256, and residual capped
 wells retain unknown full J/K with a separate partial-K lower bound. All four
 original capped nodes now exit. The [initial failed evidence](validation/m1/README.md)
 is archived, not overwritten.
+
+M2 is blocked on the fold-well identity decision in proposed ADR 0002. An
+independent analytic counterexample and three n3are fold limits show that a
+surviving well can have finite J/K when its representative maximum disappears.
+Treating every fold endpoint as inactive is incorrect, and a narrow missed
+max/min pair can duplicate a well without failing T=Gamma_max. All 30 candidate
+cases and both sources are retained, but their apparently passing ratios are
+provisional. The n3are sweep remains incomplete with failed geometry. Resolve
+fold continuation and extremum certification, then revalidate the M1/M2
+ledgers and complete the M2 census/cell gates. No M3 work has begun.
 
 The denser n3are lambda_n=0.5 production case has two residual capped nodes at
 256 periods. Both source ledgers remain incomplete and meet ADR 0001's

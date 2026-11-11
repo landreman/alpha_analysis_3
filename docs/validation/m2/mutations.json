@@ -1,0 +1,36 @@
+{
+  "scope": "Load-bearing local mutations; not a real-input coverage or scientific acceptance claim",
+  "mutations": [
+    {
+      "mutation": "skip_interior_barrier",
+      "file": "src/alpha_analysis_3/transitions.py",
+      "original_sha256": "977065359b1a756993ff338d457694d53999623ff6b184e494efc0b2533285a6",
+      "restored_sha256": "977065359b1a756993ff338d457694d53999623ff6b184e494efc0b2533285a6",
+      "test": "tests/test_m2_transitions.py::test_interior_barrier_rejects_smooth_bounce_motion",
+      "returncode": 1,
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n______________ test_interior_barrier_rejects_smooth_bounce_motion ______________\ntests/test_m2_transitions.py:84: in test_interior_barrier_rejects_smooth_bounce_motion\n    assert interior_barrier(*states) is None\nE   assert (1, 0) is None\nE    +  where (1, 0) = interior_barrier(*[State(point=array([1., 0.]), status=1, J=2.462304966511666, K=9.686019760429527, z_in=0.361859965538083, z_out=2.7657...5, z_out=2.9317364812058466, exit_index=0, max_z=array([3.14159265]), max_H=array([2.66798686]), H=2.8000000000000016)])\n=========================== short test summary info ============================\nFAILED tests/test_m2_transitions.py::test_interior_barrier_rejects_smooth_bounce_motion\n1 failed in 0.74s\n"
+    },
+    {
+      "mutation": "skip_bisection",
+      "file": "src/alpha_analysis_3/transitions.py",
+      "original_sha256": "977065359b1a756993ff338d457694d53999623ff6b184e494efc0b2533285a6",
+      "restored_sha256": "977065359b1a756993ff338d457694d53999623ff6b184e494efc0b2533285a6",
+      "test": "tests/test_m2_transitions.py::test_synthetic_split_merge",
+      "returncode": 1,
+      "output": "FF                                                                       [100%]\n=================================== FAILURES ===================================\n________________________ test_synthetic_split_merge[-1] ________________________\ntests/test_m2_transitions.py:54: in test_synthetic_split_merge\n    assert event.resolved, event.reason\nE   AssertionError: bank actions fail additivity\nE   assert False\nE    +  where False = Transition(resolved=False, point=array([1.55, 0.  ]), partner=array([nan, nan]), parent=nan, child_1=nan, child_3=nan, width=0.5, reason='bank actions fail additivity', height_residual=nan).resolved\n________________________ test_synthetic_split_merge[1] _________________________\ntests/test_m2_transitions.py:54: in test_synthetic_split_merge\n    assert event.resolved, event.reason\nE   AssertionError: bank actions fail additivity\nE   assert False\nE    +  where False = Transition(resolved=False, point=array([1.55, 0.  ]), partner=array([nan, nan]), parent=nan, child_1=nan, child_3=nan, width=0.5, reason='bank actions fail additivity', height_residual=nan).resolved\n=========================== short test summary info ============================\nFAILED tests/test_m2_transitions.py::test_synthetic_split_merge[-1] - Asserti...\nFAILED tests/test_m2_transitions.py::test_synthetic_split_merge[1] - Assertio...\n2 failed in 0.70s\n"
+    },
+    {
+      "mutation": "one_direction_partners",
+      "file": "src/alpha_analysis_3/cells.py",
+      "original_sha256": "df3c877e7042a88cd270aa34c158237051f30488d4862d4e730eee03a59c0f74",
+      "restored_sha256": "df3c877e7042a88cd270aa34c158237051f30488d4862d4e730eee03a59c0f74",
+      "test": "tests/test_m2_cells.py::test_bidirectional_coverage_includes_unreached_top_nodes",
+      "returncode": 1,
+      "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n___________ test_bidirectional_coverage_includes_unreached_top_nodes ___________\ntests/test_m2_cells.py:20: in test_bidirectional_coverage_includes_unreached_top_nodes\n    assert not mesh.frontier_bottom.any() and not mesh.frontier_top.any()\nE   assert (not np.True_)\nE    +  where np.True_ = <built-in method any of numpy.ndarray object at 0x7fed4395d0b0>()\nE    +    where <built-in method any of numpy.ndarray object at 0x7fed4395d0b0> = array([ True,  True,  True,  True,  True,  True,  True,  True]).any\nE    +      where array([ True,  True,  True,  True,  True,  True,  True,  True]) = StripMesh(vertices=array([[0.2       , 0.        , 0.        ],\\n       [0.2       , 0.        , 0.78539816],\\n       [0...y([ 0,  1,  2,  3,  4,  5,  6,  7,  0,  1,  2,  3,  4,  5,  6,  7,  8,\\n        9, 10, 11, 12, 13, 14, 15, 16, 17, 18])).frontier_bottom\n=========================== short test summary info ============================\nFAILED tests/test_m2_cells.py::test_bidirectional_coverage_includes_unreached_top_nodes\n1 failed in 0.61s\n"
+    }
+  ],
+  "restored_tests": {
+    "returncode": 0,
+    "output": "....                                                                     [100%]\n4 passed in 2.29s\n"
+  }
+}

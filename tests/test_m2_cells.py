@@ -49,6 +49,38 @@ def test_partner_threshold_scales_with_density():
     assert np.all(match_layers(a, b, density=512 / (2 * np.pi)).forward == -1)
 
 
+def test_frontier_node_marks_the_opposite_boundary_weight_unknown():
+    from types import SimpleNamespace
+    from alpha_analysis_3.cells import coverage_ledger
+    from alpha_analysis_3.conventions import uniform_source
+
+    a, c = circle(19), circle(19)
+    c.points[9, 0] = 0.45
+    mesh = stitch_ridges([a], [c], 0.2, 0.6, 0.7, 0.7)
+    incident = np.any(mesh.faces == 19 + 9, axis=1)
+    assert incident.any()
+    np.testing.assert_array_equal(mesh.unknown_faces, incident)
+    surface = SimpleNamespace(iota=0.7, nfp=1)
+    geometry = SimpleNamespace(
+        s=np.array([0.2, 0.6]),
+        layers=[
+            SimpleNamespace(arcs=[arc], points=arc.points, surface=surface)
+            for arc in (a, c)
+        ],
+    )
+    edges = [(j, (j + 1) % 19, np.array([1.0, 0, 0, 0, 0])) for j in range(19)]
+    measure = SimpleNamespace(
+        edge_weights=[edges, edges],
+        capped_nodes=0,
+        failed_nodes=0,
+        wells=[SimpleNamespace(status=np.ones(19, int)) for _ in range(2)],
+    )
+    ledger = coverage_ledger(geometry, measure, uniform_source)
+    assert ledger["frontier_resolved_weight"] == pytest.approx(
+        0.2 * int(incident.sum())
+    )
+
+
 def test_open_arcs_align_orientation_and_include_polished_folds():
     from alpha_analysis_3.cells import polish_folds
     from alpha_analysis_3.ledger import Geometry
@@ -95,6 +127,44 @@ def test_open_arcs_align_orientation_and_include_polished_folds():
     assert not mesh.frontier_bottom.any() and not mesh.frontier_top.any()
     assert not mesh.fold_gaps
     assert mesh.measure.sum() == pytest.approx(0.4 * 3 * np.pi, rel=1e-10)
+
+
+def test_above_b_fold_has_a_finite_well_limit():
+    """The same well changes its representative; it does not vanish at the fold.
+
+    Independent bounce-root quadrature gives J=0.6601101743548781 and
+    K=4.1614783045408625 at theta=pi/2. The 4096-sample scan resolves the
+    tiny preceding max/min pair; the production 128-sample scan can miss it.
+    This regression does not certify the pending fold incidence in ADR 0002.
+    """
+    from alpha_analysis_3.chains import trace_chains
+    from alpha_analysis_3.tables import Surface
+    from alpha_analysis_3.wells import wells_at_pitch, ACTIVE, INACTIVE
+    from test_m1_geometry import FourierModel
+
+    field = FourierModel(
+        m=(0, 0, 1, 1, 0),
+        n=(0, -1, -1, 1, -2),
+        c=(6, 0, 0, 0, 0),
+        sine=(0, -2, 0.25, -0.25, 1),
+        iota=0,
+        C=3.3,
+    )
+    surface = Surface(field, 0.5, 256, 256)
+    for offset in (-0.0001, 0.0001):
+        theta = np.pi / 2 + offset
+        a = -2 + 0.5 * np.cos(theta)
+        discriminant = np.sqrt(a * a + 32)
+        phi = [-np.arccos((-a - discriminant) / 8)]
+        if offset < 0:
+            phi.append(np.arccos((-a + discriminant) / 8))
+        phi = np.array(phi)
+        th = np.full(len(phi), theta)
+        chain = trace_chains(surface, th, phi, periods=2, samples_per_period=4096)
+        well = wells_at_pitch(surface, th, phi, surface.b(th, phi), chain, 5)
+        assert well.status.tolist() == ([INACTIVE, ACTIVE] if offset < 0 else [ACTIVE])
+        assert well.J[-1] == pytest.approx(0.6601101743548781, abs=2.4e-5)
+        assert well.K[-1] == pytest.approx(4.1614783045408625, abs=3.4e-5)
 
 
 def test_transition_cut_cells_keep_separate_banks():

@@ -258,6 +258,12 @@ def stitch_ridges(
                         node = vertex_nodes[idx]
                         if node >= 0:
                             (fb if vertex_layers[idx] == 0 else ft)[node] = True
+    for j, ids in enumerate(faces):
+        unknown[j] |= any(
+            vertex_nodes[idx] >= 0
+            and (fb if vertex_layers[idx] == 0 else ft)[vertex_nodes[idx]]
+            for idx in ids
+        )
     return StripMesh(
         np.asarray(vertices).reshape(-1, 3),
         faces,
@@ -585,7 +591,8 @@ def coverage_ledger(geometry, measure, h, density=128 / TWO_PI):
             density,
         )
         ownership = {}
-        for face in mesh.faces:
+        unknown_owners = set()
+        for face_index, face in enumerate(mesh.faces):
             for a, c in zip(face, np.roll(face, -1)):
                 if mesh.vertex_layers[a] == mesh.vertex_layers[c]:
                     key = (
@@ -593,6 +600,8 @@ def coverage_ledger(geometry, measure, h, density=128 / TWO_PI):
                         *sorted((int(mesh.vertex_nodes[a]), int(mesh.vertex_nodes[c]))),
                     )
                     ownership[key] = ownership.get(key, 0) + 1
+                    if mesh.unknown_faces[face_index]:
+                        unknown_owners.add(key)
         ds = geometry.s[i + 1] - geometry.s[i]
         strip_frontier = strip_resolved = 0.0
         for side, mask in enumerate((mesh.frontier_bottom, mesh.frontier_top)):
@@ -603,7 +612,12 @@ def coverage_ledger(geometry, measure, h, density=128 / TWO_PI):
                 count = ownership.get(key, 0)
                 if count > 1:
                     raise ValueError("ridge boundary edge belongs to multiple cells")
-                unknown = count == 0 or (a >= 0 and mask[a]) or mask[c]
+                unknown = (
+                    count == 0
+                    or (a >= 0 and mask[a])
+                    or mask[c]
+                    or key in unknown_owners
+                )
                 weight = factor * value[0]
                 lower = factor * value[1]
                 resolved += weight

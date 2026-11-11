@@ -184,7 +184,10 @@ def _refine_layer(
                 )
                 if not (long[idx] or (clip_folds and resolved_fold)):
                     continue
-                # At a fold m0=H0, so no strictly active starting well exists.
+                # PROVISIONAL: the zero endpoint below is wrong for a fold
+                # with a surviving outgoing well (proposed ADR 0002).
+                # Candidate M2 ledgers are not acceptance evidence until
+                # fold identity and endpoint limits are implemented.
                 edges.append(
                     (
                         endpoint,

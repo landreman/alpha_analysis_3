@@ -425,9 +425,10 @@ def surface_transitions(surface, arcs, b, max_factor=16, order=32, tolerance=1e-
             iterator = iter(sampled)
             for p in batch:
                 if key(p) in folds:
-                    # A verified generic fold is not a trapped starting well:
-                    # its first maximum and minimum coincide. This creates an
-                    # explicit boundary state, never repairs a failed well.
+                    # PROVISIONAL: this inactive boundary misses surviving
+                    # outgoing wells at above-b folds. Proposed ADR 0002
+                    # documents the counterexample; this census cannot
+                    # certify fold incidence or complete M2 acceptance.
                     states.append(
                         State(
                             p,

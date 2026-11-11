@@ -1,6 +1,8 @@
 # M2: transitions and ridge-cell coverage
 
-M2 is in progress. The acceptance row in STATUS remains unchecked. These
+M2 is **blocked**, with [PR #2](https://github.com/landreman/alpha_analysis_3/pull/2)
+left draft and [ADR 0002](../../adr/0002-fold-well-identity.md) proposed for a
+researcher decision. The acceptance row in STATUS remains unchecked. These
 records retain the initial failures; they do not claim a completed milestone,
 connectivity, Q(b), f, or the final accuracy/runtime target.
 
@@ -8,6 +10,42 @@ The baseline is `27f251d37a3ddd64784f5cead2d68a5563ba88a0`, with green
 [GitHub Tests](https://github.com/landreman/alpha_analysis_3/actions/runs/43065702135).
 The five exact manifest files, global extrema and six conserved bounce fields
 are used throughout. Both sources are reported separately.
+
+## Blocking counterexample: a fold need not kill the well
+
+The current candidate's zero/inactive fold endpoint policy is false. In the
+explicit field B=6+(-2+0.5 cos(theta)) sin(phi)+sin(2 phi), iota=0 and b=5,
+an open maximum disappears at theta=pi/2 while its outgoing well remains
+finite: J=0.6601101743548781, K=4.1614783045408625 at s=0.5 and C=3.3.
+The preceding closed maximum takes over representation of the same well.
+The independently integrated constant-J curve crosses this boundary. There
+is no interior barrier event and both T and Gamma_max counts are zero locally.
+
+The [independent diagnostic](../../../scripts/probe_m2_fold_identity.py)
+uses analytic bounce roots and QUADPACK, not the production field evaluator
+or well quadrature, for its oracle. Its [full result](fold-identity.json)
+also preserves the uniform-chain scan defect: a narrow preceding max/min
+pair is missed, making two maxima represent the same active well. Increasing
+128 to 512 samples repairs one offset but fails closer to the fold; 4096
+resolves the listed counterexample, not arbitrary fold approaches.
+
+![Finite well and constant-J continuation through the fold](fold-identity.png)
+
+The same diagnostic finds finite one-sided fold limits in n3are at
+s=0.7922826086956523 for lambda_n=0.1, 0.5 and 0.8. These are not repaired
+population totals or strict maxima at the degenerate point. The
+[projection summary](fold-projection-summary.json) records 50 problematic
+endpoint samples on the 96-surface n3are grid, including 20 base nodes with
+positive exact curvature. Direct along-line Newton projection with exact
+Fourier derivatives does not repair them. Both the projection defect and
+well-identity defect need correction; neither is an acceptable zero fill.
+
+The proposal keeps the ridge/well formulation and adds ordinary same-J
+continuation when a well's representative changes, with root/identity
+verification and explicit unknown incidence on failures. The scientific
+decision is whether to accept or revise that state-space clarification and
+its new acceptance checks. Population weight alone cannot certify the
+connectivity through a boundary. No gate or scientific input is relaxed.
 
 ## Implementation and independent checks
 
@@ -60,17 +98,19 @@ remains a failed estimate. Its population excess must be separated from
 independent angular-reference error by refinement; it is not attributed to
 missing coverage alone.
 
-## Repaired PCA evidence
+## Provisional PCA evidence
 
 The [refinement table](PCA-refinements.csv) retains the 256-, 512- and
 1024-node attempts and their [provenance](PCA-refinement-provenance.json).
-Polished fold strips remove the measured low-pitch coverage gap. Prioritizing
+Polished fold strips remove the measured low-pitch geometric gap under the
+candidate endpoint policy; ADR 0002 prevents accepting its population result.
+Prioritizing
 active-state measure avoids spending the radial insertion budget on surfaces
 inactive at all six diagnostic pitches; the earlier
 [stopped setup](stopped-setup.json) remains recorded. This priority changes no
 ledger weight or unknown-state classification.
 
-At 256 nodes all six PCA cases meet 1% ledger closure and 0.5% frontier
+At 256 nodes all six PCA cases numerically meet 1% ledger closure and 0.5% frontier
 coverage for both sources. Lambda_n=0.95 still misses transverse convergence:
 3.06% peaked-source change. At 512 nodes it is 1.38%, still a failure. At
 1024 nodes it is 0.8792% (uniform 0.3632%). The selected 1024-node ratios are
@@ -88,6 +128,54 @@ surfaces whose field is everywhere above b. The subgrid-minimum regression
 ensures this shortcut retains a narrow trapped population missed by the FFT
 grid's sampled minimum.
 
+## All 30 candidate cases, retained without certification
+
+[coverage-candidate.csv](coverage-candidate.csv) contains 60 source checks:
+six global pitches on each of the five manifest files, with uniform and
+peaked sources. The [provenance](coverage-candidate-provenance.json) records
+each raw report's SHA256, revision, controls, source hashes, timing and memory.
+The selected PCA 0.95 row uses the 1024-node attempt; the other selected rows
+use 256 nodes. All earlier attempts remain in the files above.
+
+Forty-eight checks numerically meet the candidate ratio, frontier and
+transverse screens. None is certified as M2 acceptance because the fold
+endpoint rule and possible duplicate identities are unresolved. All 12
+n3are source checks are incomplete: six pitches have 630 failed auxiliary
+points, except lambda_n=0.5 with 631. Full population ratios remain NaN.
+At lambda_n=0.8 even the known peaked-source ratio is 1.0100059524, slightly
+outside 1%; it remains a failure without rounding.
+
+The final incident-face propagation correction makes every triangle incident
+to an unpartnered vertex unknown, including weight on its opposite boundary.
+Its focused regression passes. The saved sweep's frontier columns predate
+that correction and are labelled accordingly; no updated passing coverage
+claim is inferred from them. A new full sweep is deferred until the fold
+contract is decided and implemented.
+
+The initial factor-four census is not the required final 16x census. The
+all-30 complete cut-cell plots, final additivity/count/coverage gates and
+controlled independent-reference refinement remain outstanding. No M3
+reachability, loss bracket, f or final runtime acceptance is claimed. The
+isolated PCA setup/refinement already exceeds 300 s on this host; the present
+implementation has not demonstrated a feasible full-f runtime. A denser
+uniform scan alone cannot resolve this topology issue or certify roots.
+
+## Software checks and mutations
+
+On the final candidate, `make check` passes formatting and all 55 full-tier
+tests (12.42 s pytest time, 12.93 s driver wall time, three workers). The
+isolated `make smoke` install/import check passes. These are software checks;
+the scientific failures above remain blockers.
+
+The [mutation record](mutations.json) preserves three intentionally red
+checks: bypassing the interior-barrier test accepts smooth bounce motion;
+skipping bisection fails split/merge additivity; removing reverse partners
+fails unequal-node strip coverage. Each modified source file is restored
+byte for byte (SHA256 recorded), and the four affected parametrized tests
+pass afterward. The reverse-partner mutation was exercised on the synthetic
+coverage regression; the required final real-input n3are mutation/coverage
+acceptance remains outstanding with the blocked numerical suite.
+
 ## Reproduction
 
 Run from an installed clean environment, one equilibrium at a time:
@@ -98,6 +186,8 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python scripts/validate_m2.py \
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python scripts/validate_m2_coverage.py \
   --nodes 256 --volume-phi 2048 --cut-probe --plots outputs/m2/plots \
   --output outputs/m2/coverage.json
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python scripts/probe_m2_fold_identity.py \
+  --output outputs/m2/fold-identity.json --plot outputs/m2/fold-identity.png
 ```
 
 The drivers enforce a 2 GB resident-memory watchdog, retain active
