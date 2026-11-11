@@ -1,0 +1,106 @@
+{
+  "revision": "27f251d37a3ddd64784f5cead2d68a5563ba88a0",
+  "source_hashes": {
+    "src/alpha_analysis_3/__init__.py": "cad41e41dc02a6bb1b517bbf8ebb463a8401eadd5a1a66332a86e57405ed2ddf",
+    "src/alpha_analysis_3/boozer_field.py": "1132eeb1e3e528dde2bfd6b5490d0e118cc02a05852de68a60e1c4423e1ad2ac",
+    "src/alpha_analysis_3/conventions.py": "6240892864f492464f89cfb1bff80a39ba3588e1a5ed3b1650c5ea02ed7a0c58",
+    "src/alpha_analysis_3/tables.py": "c6edecf82271e1e1796cea943e829a4d7d2dad5cf394f84314369c1572541c14",
+    "src/alpha_analysis_3/diagnostics.py": "39c31bb00a6e92af605fbf5545dd7c629907eced725d0ad7f2bb7f253dfffe0c",
+    "src/alpha_analysis_3/wells.py": "775c6a1ea5ba71749232b4ee528077038b4d5c96dc38e8246ed69a42947e0251",
+    "src/alpha_analysis_3/ledger.py": "4eb5f20757c49d7ff150a1bccea17452776e62a2f1587dab5ad881ec5e353863",
+    "src/alpha_analysis_3/cells.py": "504b30d4de8af3ee67be7d7c238336e5b874e53b4a30ed5f88c141eff69b70a7",
+    "src/alpha_analysis_3/transitions.py": "9259f23efc43629aa2683050e2658a28777f95158a05438186c4007ffd244cd4",
+    "src/alpha_analysis_3/ridge.py": "b223b2e9326119813cfc734eb5722d7661788c4b3e7085ff1572022014e70b47",
+    "src/alpha_analysis_3/chains.py": "5c28aa5eaa0f5e310f14b18b4c0548502a2b42740999b47d1b1afe55af7d1d5a"
+  },
+  "controls": {
+    "output": "outputs/m2/base-census-factor4.json",
+    "file": null,
+    "radius": null,
+    "surfaces": 24,
+    "nodes": 128,
+    "table": 512,
+    "factor": 4,
+    "order": 32,
+    "levels": [
+      0.05,
+      0.1,
+      0.5,
+      0.8,
+      0.9,
+      0.95
+    ]
+  },
+  "python": "3.12.14",
+  "workers": 1,
+  "thread_controls": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1"
+  },
+  "runs": [
+    {
+      "file": "PCA",
+      "seconds": 136.109659362,
+      "rss_gb": 0.12042240000000001,
+      "snapshots": [
+        {
+          "seconds": 60,
+          "stage": "PCA s=0.70173913 lambda=0.8",
+          "rss_gb": 0.12042240000000001
+        }
+      ]
+    },
+    {
+      "file": "TURBO",
+      "seconds": 74.87799991099996,
+      "rss_gb": 0.131735552,
+      "snapshots": [
+        {
+          "seconds": 60,
+          "stage": "TURBO s=0.87217391 lambda=0.95",
+          "rss_gb": 0.131735552
+        }
+      ]
+    },
+    {
+      "file": "DMercFail",
+      "seconds": 85.38559416099997,
+      "rss_gb": 0.131735552,
+      "snapshots": [
+        {
+          "seconds": 60,
+          "stage": "DMercFail s=0.78695652 lambda=0.9",
+          "rss_gb": 0.131735552
+        }
+      ]
+    },
+    {
+      "file": "d23p4",
+      "seconds": 104.95442861900005,
+      "rss_gb": 0.131735552,
+      "snapshots": [
+        {
+          "seconds": 60,
+          "stage": "d23p4 s=0.74434783 lambda=0.9",
+          "rss_gb": 0.131735552
+        }
+      ]
+    },
+    {
+      "file": "n3are",
+      "seconds": 161.12007133400016,
+      "rss_gb": 0.131735552,
+      "snapshots": [
+        {
+          "seconds": 60,
+          "stage": "n3are s=0.70173913 lambda=0.8",
+          "rss_gb": 0.131735552
+        }
+      ]
+    }
+  ],
+  "scope": "Transition geometry only; no cell ledger or f claim",
+  "row_count": 840,
+  "raw_report_sha256": "4779f2966751893a287aede90a1a024a4003e2ff469db3d2a0f71b3d21c0b756",
+  "baseline_tests": "https://github.com/landreman/alpha_analysis_3/actions/runs/43065702135"
+}

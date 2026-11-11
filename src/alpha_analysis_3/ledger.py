@@ -52,6 +52,7 @@ class PitchMeasure:
     failed_nodes: int
     converged: bool
     tolerance: float = 0.01
+    edge_weights: list | None = None
 
 
 def _point_weights(surface, well, chain):
@@ -114,7 +115,16 @@ def slice_refinement_error(s, weights, diagnostics, h):
 
 
 def _refine_layer(
-    layer, well, b, tolerance, max_factor, max_periods, order, strip_rule
+    layer,
+    well,
+    b,
+    tolerance,
+    max_factor,
+    max_periods,
+    order,
+    strip_rule,
+    edge_output=None,
+    clip_folds=False,
 ):
     """Dyadic positive quadrature on long-well and activity-boundary edges.
 
@@ -134,6 +144,10 @@ def _refine_layer(
         n = len(arc.H)
         for k in range(n if arc.closed else n - 1):
             a, c = offset + k, offset + (k + 1) % n
+            output_id = -1
+            if edge_output is not None:
+                output_id = len(edge_output)
+                edge_output.append((a, c, arc.dalpha[k] * (point[a] + point[c]) / 2))
             boundary = (well.status[a] != well.status[c]) or (
                 (layer.H[a] > b) != (layer.H[c] > b)
             )
@@ -152,16 +166,24 @@ def _refine_layer(
                     np.array([well.status[a], well.status[c]]),
                     np.array([a, c]),
                     width * (point[a] + point[c]) / 2,
+                    output_id,
                 )
             )
         if not arc.closed and arc.endpoints is not None:
             for node, fold in ((0, 0), (n - 1, 1)):
                 idx = offset + node
-                if not long[idx]:
-                    continue
                 endpoint = arc.endpoints[fold]
                 alpha = endpoint[0] - sf.iota * endpoint[1] / sf.nfp
                 width = abs(alpha - arc.alpha[node])
+                output_id = -1
+                if edge_output is not None:
+                    output_id = len(edge_output)
+                    edge_output.append((-1, idx, width * point[idx]))
+                resolved_fold = (
+                    arc.folds_resolved is not None and arc.folds_resolved[fold]
+                )
+                if not (long[idx] or (clip_folds and resolved_fold)):
+                    continue
                 # At a fold m0=H0, so no strictly active starting well exists.
                 edges.append(
                     (
@@ -172,6 +194,7 @@ def _refine_layer(
                         np.array([INACTIVE, well.status[idx]]),
                         np.array([-1, idx]),
                         width * point[idx],
+                        output_id,
                     )
                 )
         offset += n
@@ -297,6 +320,10 @@ def _refine_layer(
     stats["refinement_seconds"] = time.monotonic() - start
     internal_caps = int(np.sum(statuses[:, 1:-1] == CAPPED))
     failed += int(np.sum(statuses[:, 1:-1] == FAILED))
+    if edge_output is not None:
+        for edge, value in zip(edges, per_edge):
+            a, c = edge[5]
+            edge_output[edge[7]] = (int(a), int(c), value.copy())
     return unmarked + strip, stats, len(caps) + internal_caps, failed
 
 
@@ -310,6 +337,8 @@ def measure_pitch(
     refine=True,
     acceptance_tolerance=None,
     strip_rule="trapezoid",
+    retain_edges=False,
+    clip_folds=False,
 ):
     """Evaluate reusable ridge weights with ADR 0001 adaptive policy.
 
@@ -320,6 +349,8 @@ def measure_pitch(
     """
     if max_factor not in (4, 8, 16):
         raise ValueError("transverse refinement factor must be 4, 8 or 16")
+    if retain_edges and not refine:
+        raise ValueError("retained cell-edge weights require refinement")
     if strip_rule not in ("trapezoid", "simpson"):
         raise ValueError("strip rule must be trapezoid or simpson")
     if not 0 < transverse_tolerance < 1:
@@ -332,6 +363,7 @@ def measure_pitch(
     weights = []
     wells = []
     diagnostics = []
+    edge_weights = [] if retain_edges else None
     capped = failed = 0
     for layer in geometry.layers:
         budget = layer.chain_budget
@@ -349,6 +381,7 @@ def measure_pitch(
         if budget is not None:
             budget.track(layer, layer.chain)
         if refine:
+            edge_output = [] if retain_edges else None
             value, stats, cap, bad = _refine_layer(
                 layer,
                 well,
@@ -358,7 +391,11 @@ def measure_pitch(
                 max_periods,
                 order,
                 strip_rule,
+                edge_output,
+                clip_folds,
             )
+            if retain_edges:
+                edge_weights.append(edge_output)
         else:
             value = layer.measure @ _point_weights(layer.surface, well, layer.chain)[0]
             stats = dict(
@@ -387,6 +424,7 @@ def measure_pitch(
         failed,
         all(s["converged"] for s in diagnostics),
         accepted,
+        edge_weights,
     )
 
 
@@ -466,7 +504,7 @@ class Geometry:
         return float(trapezoid(source_at_s(h, self.s) * vals, self.s))
 
 
-def volume_surface(surface, b, nphi=512, order=64):
+def volume_surface(surface, b, nphi=512, order=64, theta_factor=1):
     """Independent angular integral of |C|/(B sqrt(1-B/b)) [B<b].
 
     Integrate theta at fixed phi, locating ALL crossings on the table grid;
@@ -474,10 +512,13 @@ def volume_surface(surface, b, nphi=512, order=64):
     This uses no ridges, chains, well K, partners or ridge measures. A separate
     phi grid and order can be refined independently of the ridge ledger.
     """
+    if theta_factor not in (1, 2, 4, 8, 16):
+        raise ValueError("volume theta refinement must be dyadic and <=16")
     if surface.Bmax <= b:
         return 0.0
     phi = (np.arange(nphi) + 0.5) * TWO_PI / nphi
-    theta = np.arange(surface.nt + 1) * TWO_PI / surface.nt
+    count = surface.nt * theta_factor
+    theta = np.arange(count + 1) * TWO_PI / count
     values = surface.b(theta[:, None], phi[None, :])
     crossing = (values[:-1] < b) != (values[1:] < b)
     rows, columns = np.nonzero(crossing)
