@@ -11,14 +11,18 @@ import json
 from pathlib import Path
 import subprocess
 import time
+from types import SimpleNamespace
 
 import numpy as np
 from scipy.integrate import trapezoid
 from scipy.optimize import minimize
 
 from alpha_analysis_3.boozer_field import BoozerField
+from alpha_analysis_3.cells import polish_folds
+from alpha_analysis_3.chains import trace_chains
 from alpha_analysis_3.conventions import default_source, uniform_source, source_at_s
-from alpha_analysis_3.ledger import volume_surface
+from alpha_analysis_3.ledger import volume_surface, Layer, node_measure, measure_pitch
+from alpha_analysis_3.ridge import place_nodes, ridge_arcs
 from alpha_analysis_3.tables import Surface
 from validate_m1 import Watchdog
 
@@ -66,6 +70,7 @@ def run(args):
         b=row["b"],
         extrema=row["extrema"],
         rows=[],
+        extra_ridge_refinements=[],
         sources={},
         workers=1,
         scope="Fixed ridge weights and fixed radial grid; independent angular-reference refinement only",
@@ -104,9 +109,55 @@ def run(args):
                     grid_Bmax=sf.Bmax,
                     grid_extremum_error=sf.extremum_grid_error,
                     polished_maximum_estimate=maximum,
+                    empty_active_set_proven=bool(
+                        row["b"] >= sf.Bmax + sf.extremum_grid_error
+                        or row["b"] <= sf.Bmin - sf.extremum_grid_error
+                    ),
                 )
             )
             print(float(s), R, angular, flush=True)
+            if R is None and not result["rows"][-1]["empty_active_set_proven"]:
+                for density in args.ridge_nodes:
+                    arcs = place_nodes(sf, ridge_arcs(sf), density / (2 * np.pi))
+                    points = np.vstack([a.points for a in arcs])
+                    heights = np.concatenate([a.H for a in arcs])
+                    chain = trace_chains(sf, points[:, 0], points[:, 1], 64)
+                    layer = Layer(sf, arcs, chain, points, heights, node_measure(arcs))
+                    geometry = SimpleNamespace(layers=[layer], s=np.array([s]))
+                    polish_folds(geometry)
+                    for clipped in (
+                        [False, True] if density == args.ridge_nodes[0] else [True]
+                    ):
+                        measurement = measure_pitch(
+                            geometry,
+                            row["b"],
+                            clip_folds=clipped,
+                            transverse_tolerance=0.0025,
+                            acceptance_tolerance=0.01,
+                        )
+                        resolved = float(measurement.weights[0, 0])
+                        record = dict(
+                            s=float(s),
+                            nodes=density,
+                            clip_folds=clipped,
+                            resolved_per_ds=resolved,
+                            partial_lower_per_ds=float(measurement.weights[0, 1]),
+                            capped_nodes=measurement.capped_nodes,
+                            failed_nodes=measurement.failed_nodes,
+                            factor=measurement.diagnostics[0]["factor"],
+                            relative_change=measurement.diagnostics[0][
+                                "relative_change"
+                            ],
+                            resolved_to_reference_ratios=np.divide(
+                                resolved,
+                                np.array(angular),
+                                out=np.full(len(angular), np.nan),
+                                where=np.array(angular) > 0,
+                            ).tolist(),
+                        )
+                        result["extra_ridge_refinements"].append(record)
+                        print("RIDGE", record, flush=True)
+                    del geometry, layer, chain, measurement
         values = np.asarray(values)
         for name, h in [("uniform", uniform_source), ("peaked", default_source)]:
             weight = source_at_s(h, radii)
@@ -151,5 +202,6 @@ if __name__ == "__main__":
     p.add_argument("--file", default="PCA")
     p.add_argument("--level", type=float, default=0.95)
     p.add_argument("--extra-radius", type=float, nargs="*", default=[])
+    p.add_argument("--ridge-nodes", type=int, nargs="*", default=[])
     p.add_argument("--output", default="outputs/m2/reference-refinement.json")
     raise SystemExit(run(p.parse_args()))
