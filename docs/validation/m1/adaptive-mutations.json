@@ -1,0 +1,32 @@
+[
+  {
+    "mutation": "seam",
+    "test": "test_axisymmetric_ridge_is_one_closed_curve",
+    "exit_code": 1,
+    "reverted": true
+  },
+  {
+    "mutation": "arclength",
+    "test": "test_action_and_time_of_cosine_well",
+    "exit_code": 1,
+    "reverted": true
+  },
+  {
+    "mutation": "direction",
+    "test": "test_action_and_time_of_cosine_well",
+    "exit_code": 1,
+    "reverted": true
+  },
+  {
+    "mutation": "capped_passing",
+    "test": "test_real_well_beyond_design_cap_stays_unknown or test_ceiling_keeps_unknown_with_partial_weight_lower_bound",
+    "exit_code": 1,
+    "reverted": true
+  },
+  {
+    "mutation": "cancellation",
+    "test": "test_opposite_strip_errors_do_not_cancel",
+    "exit_code": 1,
+    "reverted": true
+  }
+]

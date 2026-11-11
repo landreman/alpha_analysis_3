@@ -1,0 +1,238 @@
+{
+  "data_sha256": {
+    "PCA": "49eec0d9ff88fb52cc377be7d190da35b6815210baa36c5daee2bea7f6ab3fbd",
+    "TURBO": "ec583795826f7b9cb213d0c63977ecc03b1e72e98bcc53de9a0621f17934202e"
+  },
+  "source_hashes": {
+    "__init__.py": "cad41e41dc02a6bb1b517bbf8ebb463a8401eadd5a1a66332a86e57405ed2ddf",
+    "boozer_field.py": "1132eeb1e3e528dde2bfd6b5490d0e118cc02a05852de68a60e1c4423e1ad2ac",
+    "chains.py": "5bf93d0bca5cd9b90fe0691bdd815849178d7f12a3aee63c2fd0a995178493e5",
+    "conventions.py": "6240892864f492464f89cfb1bff80a39ba3588e1a5ed3b1650c5ea02ed7a0c58",
+    "diagnostics.py": "39c31bb00a6e92af605fbf5545dd7c629907eced725d0ad7f2bb7f253dfffe0c",
+    "ledger.py": "48c0252c117dcb6c991262e647e94880524e8db8eab132a1339ed57955a40810",
+    "ridge.py": "b223b2e9326119813cfc734eb5722d7661788c4b3e7085ff1572022014e70b47",
+    "tables.py": "c6edecf82271e1e1796cea943e829a4d7d2dad5cf394f84314369c1572541c14",
+    "wells.py": "74ba02e9a99e62a791cdbbc0a20bc29de7817da31eedf815658cc24165359b88"
+  },
+  "probes": [
+    {
+      "s": 0.44608695652173913,
+      "theta": 9.935229442252941,
+      "phi": 6.903643850431844,
+      "b": 11.167688974652412,
+      "lambda_n": 0.8,
+      "file": "PCA",
+      "scans": [
+        {
+          "periods": 48,
+          "samples_per_period": 128,
+          "status": 2,
+          "partial_K": 2625.6451695094656,
+          "seconds": 0.03358670900342986
+        },
+        {
+          "periods": 64,
+          "samples_per_period": 128,
+          "status": 2,
+          "partial_K": 3521.5479724831457,
+          "seconds": 0.030794289996265434
+        },
+        {
+          "periods": 256,
+          "samples_per_period": 128,
+          "status": 1,
+          "partial_K": 4065.877271452003,
+          "seconds": 0.06790052399446722,
+          "exit_index": 91,
+          "exit_periods": 73.80031579151934,
+          "exact_exit_height": 11.169848845660296,
+          "exact_largest_prior_height": 11.163170847938055,
+          "J": 464.9265791978496,
+          "K": 4065.877271452003,
+          "relative_J_order32": 3.782571900146081e-08,
+          "relative_K_order32": 1.603030441721387e-08
+        },
+        {
+          "periods": 128,
+          "samples_per_period": 512,
+          "status": 1,
+          "partial_K": 4065.8772714533807,
+          "seconds": 0.07882923301076517,
+          "exit_index": 92,
+          "exit_periods": 73.80031579151941,
+          "exact_exit_height": 11.16984884566029,
+          "exact_largest_prior_height": 11.163170847938055,
+          "J": 464.9265791978445,
+          "K": 4065.8772714533807,
+          "relative_J_order32": 3.772233259091706e-08,
+          "relative_K_order32": 1.5975769374065862e-08
+        }
+      ]
+    },
+    {
+      "s": 0.8295652173913044,
+      "theta": 15.982749366888166,
+      "phi": 13.057817282260391,
+      "b": 11.81493985662058,
+      "lambda_n": 0.95,
+      "file": "PCA",
+      "scans": [
+        {
+          "periods": 48,
+          "samples_per_period": 128,
+          "status": 2,
+          "partial_K": 2217.3444969523207,
+          "seconds": 0.026182440997217782
+        },
+        {
+          "periods": 64,
+          "samples_per_period": 128,
+          "status": 2,
+          "partial_K": 2937.840651999779,
+          "seconds": 0.032506679999642074
+        },
+        {
+          "periods": 256,
+          "samples_per_period": 128,
+          "status": 1,
+          "partial_K": 5283.290112414945,
+          "seconds": 0.058700242996565066,
+          "exit_index": 150,
+          "exit_periods": 114.84383315512493,
+          "exact_exit_height": 11.815821595252006,
+          "exact_largest_prior_height": 11.81259417762997,
+          "J": 863.542658658285,
+          "K": 5283.290112414945,
+          "relative_J_order32": 2.62144698837119e-07,
+          "relative_K_order32": 1.2056521825343225e-07
+        },
+        {
+          "periods": 128,
+          "samples_per_period": 512,
+          "status": 1,
+          "partial_K": 5283.290112418051,
+          "seconds": 0.07542823799303733,
+          "exit_index": 150,
+          "exit_periods": 114.84383315512498,
+          "exact_exit_height": 11.815821595252004,
+          "exact_largest_prior_height": 11.81259417762997,
+          "J": 863.5426586582835,
+          "K": 5283.290112418051,
+          "relative_J_order32": 2.621446995032528e-07,
+          "relative_K_order32": 1.2056448239761153e-07
+        }
+      ]
+    },
+    {
+      "file": "TURBO",
+      "s": 0.6591304347826087,
+      "theta": 3.5690017001256544,
+      "phi": 0.94015032282564,
+      "b": 11.563436163071604,
+      "lambda_n": 0.9,
+      "scans": [
+        {
+          "periods": 48,
+          "samples_per_period": 128,
+          "status": 2,
+          "partial_K": 2872.9524658656032,
+          "seconds": 0.028290735004702583
+        },
+        {
+          "periods": 64,
+          "samples_per_period": 128,
+          "status": 2,
+          "partial_K": 3801.5466690348835,
+          "seconds": 0.028404538999893703
+        },
+        {
+          "periods": 256,
+          "samples_per_period": 128,
+          "status": 1,
+          "partial_K": 6019.054148737853,
+          "seconds": 0.056129628006601706,
+          "exit_index": 79,
+          "exit_periods": 99.69055263289899,
+          "exact_exit_height": 11.567809496690183,
+          "exact_largest_prior_height": 11.562982426236251,
+          "J": 646.1823319050114,
+          "K": 6019.054148737853,
+          "relative_J_order32": 3.5687031108011524e-10,
+          "relative_K_order32": 1.242031810733124e-09
+        },
+        {
+          "periods": 128,
+          "samples_per_period": 512,
+          "status": 1,
+          "partial_K": 6019.0541487416485,
+          "seconds": 0.06446740298997611,
+          "exit_index": 79,
+          "exit_periods": 99.6905526328988,
+          "exact_exit_height": 11.567809496690183,
+          "exact_largest_prior_height": 11.562982426236251,
+          "J": 646.1823319050116,
+          "K": 6019.0541487416485,
+          "relative_J_order32": 3.5687119925853494e-10,
+          "relative_K_order32": 1.2416865313724657e-09
+        }
+      ]
+    },
+    {
+      "file": "TURBO",
+      "s": 0.6591304347826087,
+      "theta": 3.589830414129377,
+      "phi": 0.9843687256598073,
+      "b": 11.563436163071604,
+      "lambda_n": 0.9,
+      "scans": [
+        {
+          "periods": 48,
+          "samples_per_period": 128,
+          "status": 2,
+          "partial_K": 2885.7420728510447,
+          "seconds": 0.0282498430024134
+        },
+        {
+          "periods": 64,
+          "samples_per_period": 128,
+          "status": 2,
+          "partial_K": 3814.1467139464116,
+          "seconds": 0.024787007001577877
+        },
+        {
+          "periods": 256,
+          "samples_per_period": 128,
+          "status": 1,
+          "partial_K": 5998.936189575928,
+          "seconds": 0.05292814300628379,
+          "exit_index": 79,
+          "exit_periods": 99.69045443939035,
+          "exact_exit_height": 11.565395483418158,
+          "exact_largest_prior_height": 11.562008256622155,
+          "J": 646.1831778894958,
+          "K": 5998.936189575928,
+          "relative_J_order32": 3.747863130953988e-10,
+          "relative_K_order32": 7.458744732957712e-10
+        },
+        {
+          "periods": 128,
+          "samples_per_period": 512,
+          "status": 1,
+          "partial_K": 5998.936189555733,
+          "seconds": 0.06513222301146016,
+          "exit_index": 79,
+          "exit_periods": 99.69045443939041,
+          "exact_exit_height": 11.565395483418158,
+          "exact_largest_prior_height": 11.562008256622153,
+          "J": 646.1831778894963,
+          "K": 5998.936189555733,
+          "relative_J_order32": 3.7478664616230617e-10,
+          "relative_K_order32": 7.495470910612312e-10
+        }
+      ]
+    }
+  ],
+  "total_seconds": 2.5083038349985145,
+  "peak_rss_gb": 0.13621248,
+  "snapshots": []
+}

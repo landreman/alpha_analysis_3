@@ -21,7 +21,7 @@ class Chains:
     periods: np.ndarray
 
 
-def trace_chains(surface, theta, phi, periods=48, samples_per_period=128):
+def trace_chains(surface, theta, phi, periods=64, samples_per_period=128):
     """Trace up to K_max periods, with bounded temporary arrays (32 lines)."""
     if (
         not 1 <= periods <= 256

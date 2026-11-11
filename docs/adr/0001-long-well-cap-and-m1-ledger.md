@@ -188,3 +188,20 @@ This is not evidence that the ridge formulation should be abandoned. It shows th
 prototype's 19-period observation is not a safe bound. The present implementation
 cannot yet claim accurate f or the full 300 s target; those claims require M3–M5
 evidence and a usable treatment of these long wells.
+
+## Implementation follow-through, 2026-11-11
+
+The statements above about the incomplete implementation and its 48-period
+default describe the pre-decision commit `c5ce166`. The accepted policy is now
+implemented with a 64-period default and selective doubling through 128/256.
+The [post-decision report](../validation/m1/adaptive.md) preserves all attempts,
+the four direct-series exit checks, transverse and angular refinements,
+production tail surveys, mutations, resource accounting and local gates.
+
+All 30 base ledger cases meet their original ratio limits for both sources.
+The corresponding production-grid cases meet both ledger and refinement
+limits. The coarse PCA 0.95 peaked refinement miss is retained and resolved
+at production density. The separate d23p4 error is closed without rounding or
+changing acceptance. Residual capped tail probes remain unknown; two additional
+lambda_n=0.99 probes remain unconverged. Their partial lower bounds do not
+certify the new M3 budget, and no f or complete runtime acceptance is claimed.

@@ -76,6 +76,26 @@ def _relative_strip_change(previous, current, known):
     return float(np.sum(np.abs(difference))) / max(abs(known), 1e-300)
 
 
+def _strip_integrals(widths, values, factor, rule):
+    """Integrate sampled K d alpha with positive dyadic quadrature weights."""
+    if rule == "trapezoid":
+        return (
+            widths[:, None]
+            * (values[:, 0] / 2 + values[:, -1] / 2 + values[:, 1:-1].sum(axis=1))
+            / factor
+        )
+    return (
+        widths[:, None]
+        * (
+            values[:, 0]
+            + values[:, -1]
+            + 4 * values[:, 1:-1:2].sum(axis=1)
+            + 2 * values[:, 2:-1:2].sum(axis=1)
+        )
+        / (3 * factor)
+    )
+
+
 def slice_refinement_error(s, weights, diagnostics, h):
     """Source-weighted full-slice estimate from absolute edge changes.
 
@@ -92,8 +112,10 @@ def slice_refinement_error(s, weights, diagnostics, h):
     return error, error / max(abs(total), 1e-300)
 
 
-def _refine_layer(layer, well, b, tolerance, max_factor, max_periods, order):
-    """Dyadic transverse trapezoids on long-well and activity-boundary edges.
+def _refine_layer(
+    layer, well, b, tolerance, max_factor, max_periods, order, strip_rule
+):
+    """Dyadic positive quadrature on long-well and activity-boundary edges.
 
     Every base node remains in the quadrature. Convergence is the change in
     selected strip weight divided by the complete surface's known weight;
@@ -161,6 +183,7 @@ def _refine_layer(layer, well, b, tolerance, max_factor, max_periods, order):
         extension_seconds=0.0,
         refinement_seconds=0.0,
         maximum_periods=int(np.max(layer.chain.periods, initial=0)),
+        strip_rule=strip_rule,
     )
     caps = set(np.flatnonzero(well.status == CAPPED).tolist())
     failed = int(np.sum(well.status == FAILED))
@@ -231,11 +254,7 @@ def _refine_layer(layer, well, b, tolerance, max_factor, max_periods, order):
             state[:, ::2] = statuses
             state[:, 1::2] = new_status.reshape(len(edges), len(fractions))
             values, statuses = refined, state
-            per_edge = (
-                widths[:, None]
-                * (values[:, 0] / 2 + values[:, -1] / 2 + values[:, 1:-1].sum(axis=1))
-                / factor
-            )
+            per_edge = _strip_integrals(widths, values, factor, strip_rule)
             strip = per_edge.sum(axis=0)
             known = float(np.sum((unmarked + strip)[:2]))
             change = _relative_strip_change(previous, per_edge, known)
@@ -275,16 +294,27 @@ def measure_pitch(
     transverse_tolerance=0.01,
     max_factor=16,
     refine=True,
+    acceptance_tolerance=None,
+    strip_rule="trapezoid",
 ):
     """Evaluate reusable ridge weights with ADR 0001 adaptive policy.
 
     The independent volume integral is deliberately absent. Source profiles
     and volume-reference resolution can be changed without recomputing wells.
+    transverse_tolerance controls local stopping; acceptance_tolerance, when
+    supplied, keeps the source-weighted slice gate fixed under tighter control.
     """
     if max_factor not in (4, 8, 16):
         raise ValueError("transverse refinement factor must be 4, 8 or 16")
+    if strip_rule not in ("trapezoid", "simpson"):
+        raise ValueError("strip rule must be trapezoid or simpson")
     if not 0 < transverse_tolerance < 1:
         raise ValueError("transverse tolerance must be between zero and one")
+    accepted = (
+        transverse_tolerance if acceptance_tolerance is None else acceptance_tolerance
+    )
+    if not transverse_tolerance <= accepted < 1:
+        raise ValueError("quadrature control must be at least as strict as acceptance")
     weights = []
     wells = []
     diagnostics = []
@@ -302,7 +332,14 @@ def measure_pitch(
         )
         if refine:
             value, stats, cap, bad = _refine_layer(
-                layer, well, b, transverse_tolerance, max_factor, max_periods, order
+                layer,
+                well,
+                b,
+                transverse_tolerance,
+                max_factor,
+                max_periods,
+                order,
+                strip_rule,
             )
         else:
             value = layer.measure @ _point_weights(layer.surface, well, layer.chain)[0]
@@ -331,7 +368,7 @@ def measure_pitch(
         capped,
         failed,
         all(s["converged"] for s in diagnostics),
-        transverse_tolerance,
+        accepted,
     )
 
 
@@ -358,7 +395,7 @@ class Geometry:
         nt=512,
         nphi=512,
         density=128 / TWO_PI,
-        periods=48,
+        periods=64,
         samples_per_period=128,
         progress=None,
     ):
@@ -464,13 +501,32 @@ def pitch_ledger(
     wells=None,
     measure=None,
     volume_values=None,
+    max_periods=256,
+    transverse_tolerance=0.01,
+    max_factor=16,
+    refine=True,
+    acceptance_tolerance=None,
+    strip_rule="trapezoid",
 ):
     """Return ridge/volume weights and explicit unresolved diagnostics.
 
     A capped or failed well makes the ridge total incomplete (NaN), rather
     than silently assigning zero weight. resolved_weight remains diagnostic.
     Partner-frontier weight is reported separately and stays in the total.
+    Without precomputed wells or a measure, apply the accepted adaptive policy.
     """
+    if measure is None and wells is None:
+        measure = measure_pitch(
+            geometry,
+            b,
+            order=order,
+            max_periods=max_periods,
+            transverse_tolerance=transverse_tolerance,
+            max_factor=max_factor,
+            refine=refine,
+            acceptance_tolerance=acceptance_tolerance,
+            strip_rule=strip_rule,
+        )
     ridge, lower, volume, frontier = [], [], [], []
     capped = failed = 0
     for i, l in enumerate(geometry.layers):

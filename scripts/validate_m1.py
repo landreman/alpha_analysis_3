@@ -76,8 +76,7 @@ def test_ledger_matrix(rows):
         for name, result in row["sources"].items():
             ratio = result.get("ratio", float("nan"))
             if (
-                not result.get("refinement_converged", True)
-                or result.get("failed_nodes", 0) > 0
+                result.get("failed_nodes", 0) > 0
                 or (
                     result.get("capped_nodes", 0) > 0
                     and (
@@ -93,6 +92,16 @@ def test_ledger_matrix(rows):
             ):
                 failures.append((row["file"], row["lambda_n"], name, ratio, tolerance))
     return failures
+
+
+def refinement_failures(rows):
+    """Separate convergence of the chosen grid from the M1 base ledger test."""
+    return [
+        (row["file"], row["lambda_n"], name, result["refinement_relative_error"])
+        for row in rows
+        for name, result in row["sources"].items()
+        if not result.get("refinement_converged", True)
+    ]
 
 
 def run(args):
@@ -158,6 +167,10 @@ def run(args):
                         or (0.01 if entry["id"] in ("DMercFail", "d23p4") else 0.06),
                         max_factor=args.max_factor,
                         refine=not args.no_refine,
+                        acceptance_tolerance=(
+                            0.01 if entry["id"] in ("DMercFail", "d23p4") else 0.06
+                        ),
+                        strip_rule=args.strip_rule,
                     )
                     if args.adaptive
                     else None
@@ -256,7 +269,9 @@ def run(args):
             print("RUN", json.dumps(run), flush=True)
             del geometry, wells
             gc.collect()
-        report["failures"] = test_ledger_matrix(rows)
+        report["ledger_failures"] = test_ledger_matrix(rows)
+        report["refinement_failures"] = refinement_failures(rows)
+        report["failures"] = report["ledger_failures"] + report["refinement_failures"]
         (output / "matrix.json").write_text(json.dumps(report, indent=2))
     return bool(report["failures"])
 
@@ -270,13 +285,18 @@ if __name__ == "__main__":
     parser.add_argument("--surfaces", type=int, default=24)
     parser.add_argument("--table", type=int, default=512)
     parser.add_argument("--nodes", type=int, default=128)
-    parser.add_argument("--periods", type=int, default=48)
+    parser.add_argument("--periods", type=int, default=64)
     parser.add_argument("--samples", type=int, default=128)
     parser.add_argument("--volume-phi", type=int, default=512)
     parser.add_argument("--order", type=int, default=64)
-    parser.add_argument("--adaptive", action="store_true")
+    parser.add_argument(
+        "--adaptive", action=argparse.BooleanOptionalAction, default=True
+    )
     parser.add_argument("--max-periods", type=int, default=256)
     parser.add_argument("--max-factor", type=int, default=16)
     parser.add_argument("--transverse-tolerance", type=float)
+    parser.add_argument(
+        "--strip-rule", choices=("trapezoid", "simpson"), default="trapezoid"
+    )
     parser.add_argument("--no-refine", action="store_true")
     raise SystemExit(run(parser.parse_args()))

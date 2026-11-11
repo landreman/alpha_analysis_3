@@ -12,7 +12,13 @@ from alpha_analysis_3.tables import Surface
 from alpha_analysis_3.ridge import ridge_arcs, place_nodes
 from alpha_analysis_3.chains import trace_chains
 from alpha_analysis_3.wells import wells_at_pitch, ACTIVE, CAPPED, INACTIVE
-from alpha_analysis_3.ledger import Geometry, pitch_ledger, volume_surface
+from alpha_analysis_3.wells import adaptive_wells_at_pitch
+from alpha_analysis_3.ledger import (
+    Geometry,
+    pitch_ledger,
+    volume_surface,
+    measure_pitch,
+)
 from alpha_analysis_3.conventions import uniform_source, default_source
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,8 +51,12 @@ class FourierModel:
         return self.transform
 
 
-def test_tables_match_exact_series():
-    entry = json.loads((ROOT / "data/manifest.json").read_text())["files"][0]
+@pytest.mark.parametrize(
+    "entry",
+    json.loads((ROOT / "data/manifest.json").read_text())["files"],
+    ids=lambda e: e["id"],
+)
+def test_tables_match_exact_series(entry):
     field = BoozerField(ROOT / "data" / entry["file"])
     sf = Surface(field, 0.63, 512, 512)
     rng = np.random.default_rng(53)
@@ -163,7 +173,9 @@ def test_cosine_volume_and_ledger_measure():
         density=16 / (2 * np.pi),
         periods=1,
     )
-    result = pitch_ledger(short, 2.1, uniform_source, volume_nphi=32)
+    result = pitch_ledger(
+        short, 2.1, uniform_source, volume_nphi=32, max_periods=1, refine=False
+    )
     assert result["capped_nodes"] > 0
     assert np.isnan(result["ridge_weight"]) and np.isnan(result["ratio"])
 
@@ -252,3 +264,159 @@ def test_real_well_beyond_design_cap_stays_unknown():
     assert extended.max_z[0, w.exit_index[0]] / sf.L == pytest.approx(
         73.80031579, abs=1e-7
     )
+
+
+def test_adaptive_extension_only_retraces_capped_nodes():
+    sf = Surface(FourierModel(iota=0.2), 0.5, 64, 64)
+    theta, phi = np.array([0.0, np.pi]), np.zeros(2)
+    H = sf.b(theta, phi)
+    ch = trace_chains(sf, theta, phi, periods=1)
+    well, extended, stats = adaptive_wells_at_pitch(
+        sf, theta, phi, H, ch, 2.1, max_periods=8
+    )
+    np.testing.assert_array_equal(well.status, [ACTIVE, INACTIVE])
+    np.testing.assert_array_equal(extended.periods, [8, 1])
+    assert stats["extended_nodes"] == 1
+    assert ch.periods.tolist() == [1, 1]
+    # Releasing extraction tables must not break a later extension.
+    sf.release_derivatives()
+    released, _, _ = adaptive_wells_at_pitch(sf, theta, phi, H, ch, 2.1, max_periods=8)
+    np.testing.assert_allclose(released.K[0], well.K[0], rtol=1e-12)
+
+
+def test_ceiling_keeps_unknown_with_partial_weight_lower_bound():
+    sf = Surface(FourierModel(iota=0.2), 0.5, 128, 128)
+    theta, phi = np.array([0.0]), np.array([0.3])
+    H = sf.b(theta, phi)
+    ch = trace_chains(sf, theta, phi, periods=1)
+    a, ca, _ = adaptive_wells_at_pitch(sf, theta, phi, H, ch, 2.1, max_periods=2)
+    b, cb, _ = adaptive_wells_at_pitch(sf, theta, phi, H, ch, 2.1, max_periods=3)
+    full, _, _ = adaptive_wells_at_pitch(sf, theta, phi, H, ch, 2.1, max_periods=8)
+    assert a.status[0] == b.status[0] == CAPPED
+    assert ca.periods[0] == 2 and cb.periods[0] == 3
+    assert np.isnan(a.J[0]) and np.isnan(a.K[0])
+    assert 0 < a.partial_K[0] < b.partial_K[0] < full.K[0]
+
+
+@pytest.mark.parametrize("strip_rule", ["trapezoid", "simpson"])
+def test_long_strip_refinement_preserves_measure_and_reports_level(strip_rule):
+    geometry = Geometry(
+        FourierModel(iota=0.01),
+        [0.1, 0.9],
+        nt=64,
+        nphi=64,
+        density=8 / (2 * np.pi),
+        periods=64,
+    )
+    # The survey may retain the current surface's temporary derivative tables;
+    # the same analytic measure must hold with that cache already populated.
+    geometry.layers[0].surface.restore_derivatives()
+    measure = measure_pitch(
+        geometry, 2.1, transverse_tolerance=0.01, strip_rule=strip_rule
+    )
+    result = pitch_ledger(
+        geometry, 2.1, uniform_source, volume_nphi=32, measure=measure
+    )
+    assert measure.converged and measure.capped_nodes == measure.failed_nodes == 0
+    assert result["ratio"] == pytest.approx(1, rel=2e-7)
+    for stats in measure.diagnostics:
+        assert stats["long_nodes"] == 8
+        assert stats["factor"] == 4 and stats["converged"]
+    assert result["tail_weights"]["64"] == pytest.approx(
+        result["ridge_weight"], rel=1e-12
+    )
+
+
+def test_capped_ledger_is_incomplete_with_partial_lower_bound():
+    geometry = Geometry(
+        FourierModel(iota=0.001),
+        [0.1, 0.9],
+        nt=64,
+        nphi=64,
+        density=8 / (2 * np.pi),
+        periods=64,
+    )
+    measure = measure_pitch(geometry, 2.1, transverse_tolerance=0.01)
+    result = pitch_ledger(
+        geometry, 2.1, uniform_source, volume_nphi=32, measure=measure
+    )
+    assert result["capped_nodes"] > 0 and np.isnan(result["ratio"])
+    assert result["resolved_weight"] == 0
+    assert 0 < result["capped_weight_lower_bound"] < result["volume_weight"]
+    assert result["gap_to_volume"] == pytest.approx(
+        result["volume_weight"] - result["capped_weight_lower_bound"]
+    )
+    assert all(
+        np.isnan(w.K).all() and np.all(w.status == CAPPED) for w in measure.wells
+    )
+
+
+def test_opposite_strip_errors_do_not_cancel():
+    from alpha_analysis_3.ledger import _relative_strip_change
+
+    # Independent polynomials u² and 1-u² on [0,1] have integrals 1/3 and
+    # 2/3. One-panel trapezoids give (.5,.5), two panels (.375,.625).
+    # Their total is unchanged even though neither strip has converged.
+    previous = np.array([[0.5, 0], [0.5, 0]])
+    refined = np.array([[0.375, 0], [0.625, 0]])
+    assert refined[:, 0].sum() == previous[:, 0].sum()
+    assert _relative_strip_change(previous, refined, 1.0) == pytest.approx(0.25)
+
+
+def test_dyadic_strip_quadrature_matches_polynomial_integrals():
+    from alpha_analysis_3.ledger import _strip_integrals
+
+    # Independent integrals on alpha in [0,2]: integral(1+(alpha/2)^3)=5/2,
+    # integral((alpha/2)^2)=2/3. Both sampled densities are nonnegative.
+    u = np.linspace(0, 1, 5)
+    values = np.stack((1 + u**3, u**2), axis=-1)[None]
+    result = _strip_integrals(np.array([2.0]), values, 4, "simpson")
+    np.testing.assert_allclose(result[0], [2.5, 2 / 3], rtol=1e-14)
+
+
+def test_slice_error_uses_absolute_changes_and_source_weights():
+    from alpha_analysis_3.ledger import slice_refinement_error
+
+    # Simpson or cancellation is not used: radial trapezoids have positive
+    # weights (1/4,1/2,1/4). Two surface errors therefore add, rather than cancel.
+    s = np.array([0.0, 0.5, 1.0])
+    weights = np.zeros((3, 5))
+    weights[:, 0] = [1.0, 2.0, 3.0]
+    diagnostics = [
+        dict(relative_change=0.1),
+        dict(relative_change=0.2),
+        dict(relative_change=0.1),
+    ]
+    error, relative = slice_refinement_error(s, weights, diagnostics, uniform_source)
+    assert error == pytest.approx(0.3)
+    assert relative == pytest.approx(0.15)
+    # Source h(rho)=1-rho² gives radial weights (1/4,1/4,0).
+    error, relative = slice_refinement_error(
+        s, weights, diagnostics, lambda rho: 1 - rho**2
+    )
+    assert error == pytest.approx(0.125)
+    assert relative == pytest.approx(1 / 6)
+
+
+def test_marginal_surface_needs_tighter_quadrature_control():
+    from types import SimpleNamespace
+    from alpha_analysis_3.ledger import Layer, node_measure
+
+    entry = json.loads((ROOT / "data/manifest.json").read_text())["files"][3]
+    sf = Surface(BoozerField(ROOT / "data" / entry["file"]), 0.8540425531914895)
+    arcs = place_nodes(sf, ridge_arcs(sf), density=512 / (2 * np.pi))
+    points = np.vstack([a.points for a in arcs])
+    H = np.concatenate([a.H for a in arcs])
+    chain = trace_chains(sf, points[:, 0], points[:, 1], periods=64)
+    layer = Layer(sf, arcs, chain, points, H, node_measure(arcs))
+    # Independent angular volume, rather than another ridge discretization.
+    b = 3.316712409154169
+    reference = volume_surface(sf, b, nphi=2048, order=96)
+    result = measure_pitch(
+        SimpleNamespace(layers=[layer]),
+        b,
+        transverse_tolerance=0.0025,
+        acceptance_tolerance=0.01,
+    )
+    assert result.capped_nodes == result.failed_nodes == 0
+    assert abs(result.weights[0, 0] / reference - 1) < 0.02

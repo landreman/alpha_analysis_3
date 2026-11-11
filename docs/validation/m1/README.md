@@ -1,4 +1,13 @@
-# M1 implementation evidence — incomplete
+# M1 initial implementation evidence — archived
+
+This report records commit `c5ce166`, before the decision in ADR 0001. Its
+failures and incomplete ratios remain evidence of that attempt. See the
+[post-decision report](adaptive.md) for the accepted adaptive policy and the
+subsequent validation. Statements below about defaults and PR status describe
+the initial attempt.
+
+For exact historical reproduction, check out `c5ce166` before running the
+commands below; current defaults implement the accepted follow-up decision.
 
 This branch builds pitch-independent field tables, ridge curves, extremum chains
 and trapped-well integrals. The population ledger compares the sum of time spent

@@ -26,6 +26,7 @@ PROBES = [
         phi=6.903643850431844,
         b=11.167688974652413,
         lambda_n=0.8,
+        file="PCA",
     ),
     dict(
         s=0.8295652173913044,
@@ -33,15 +34,38 @@ PROBES = [
         phi=13.057817282260391,
         b=11.81493985662058,
         lambda_n=0.95,
+        file="PCA",
     ),
 ]
+PROBES.extend(
+    [
+        dict(
+            file="TURBO",
+            s=0.6591304347826087,
+            theta=3.5690017001256544,
+            phi=0.94015032282564,
+            b=11.563436163071603,
+            lambda_n=0.9,
+        ),
+        dict(
+            file="TURBO",
+            s=0.6591304347826087,
+            theta=3.589830414129377,
+            phi=0.9843687256598073,
+            b=11.563436163071603,
+            lambda_n=0.9,
+        ),
+    ]
+)
 
 
 def main():
-    entry = json.loads((ROOT / "data/manifest.json").read_text())["files"][0]
-    field = BoozerField(ROOT / "data" / entry["file"])
+    entries = {
+        e["id"]: e
+        for e in json.loads((ROOT / "data/manifest.json").read_text())["files"]
+    }
     report = dict(
-        data_sha256=entry["sha256"],
+        data_sha256={k: entries[k]["sha256"] for k in ("PCA", "TURBO")},
         source_hashes={
             p.name: hashlib.sha256(p.read_bytes()).hexdigest()
             for p in sorted((ROOT / "src/alpha_analysis_3").glob("*.py"))
@@ -51,6 +75,7 @@ def main():
     with Watchdog() as guard:
         start = time.monotonic()
         for probe in PROBES:
+            field = BoozerField(ROOT / "data" / entries[probe["file"]]["file"])
             sf = Surface(field, probe["s"])
             th, ph = np.array([probe["theta"]]), np.array([probe["phi"]])
             H = sf.b(th, ph)
@@ -67,6 +92,7 @@ def main():
                     periods=periods,
                     samples_per_period=samples,
                     status=int(well.status[0]),
+                    partial_K=float(well.partial_K[0]),
                     seconds=time.monotonic() - t,
                 )
                 if len(indices):
