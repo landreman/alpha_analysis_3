@@ -80,3 +80,63 @@ def plot_geometry(geometry, path, b=None):
     )
     fig.savefig(path, dpi=140)
     plt.close(fig)
+
+
+def plot_transition_cells(result, field, path, title="Transition-cut ridge cells"):
+    """Show cell banks, the child-3 ridge point and independently checked J.
+
+    Diagnostics only: polygons use unwrapped theta, while ridge points on the
+    angular torus are reduced modulo 2pi. No reachability is inferred here.
+    """
+    import matplotlib.pyplot as plt
+    from matplotlib.collections import PolyCollection
+    from matplotlib.patches import Patch
+
+    fig, axes = plt.subplots(1, 3, figsize=(14, 4), constrained_layout=True)
+    colours = {
+        "regular": "#94c5e0",
+        "bank": "#48a86b",
+        "unknown": "#d86b5a",
+        "inactive": "#dddddd",
+    }
+    polygons = [c.points[:, [0, 1]] for c in result.cells]
+    axes[0].add_collection(
+        PolyCollection(
+            polygons,
+            facecolors=[colours[c.kind] for c in result.cells],
+            edgecolors="#333333",
+            linewidths=0.15,
+        )
+    )
+    axes[0].autoscale_view()
+    axes[0].set(xlabel="s = rho²", ylabel="unwrapped theta [rad]", title=title)
+    axes[0].legend(
+        handles=[Patch(color=v, label=k) for k, v in colours.items()], fontsize=8
+    )
+    events = [e for segment in result.transitions for e in segment]
+    for e in events:
+        x = e.point[-2:] % (2 * np.pi)
+        y = e.partner[-2:] % (2 * np.pi)
+        axes[1].plot(x[0], x[1], "ko", ms=3)
+        axes[1].plot(y[0], y[1], "rx", ms=4)
+        if np.linalg.norm(x - y) < np.pi:
+            axes[1].plot([x[0], y[0]], [x[1], y[1]], "k--", lw=0.5)
+    axes[1].set(
+        xlabel="theta mod 2pi [rad]",
+        ylabel="phi mod 2pi [rad]",
+        title="Transition (black), child 3 (red)",
+        xlim=(0, 2 * np.pi),
+        ylim=(0, 2 * np.pi),
+    )
+    for k, e in enumerate(events):
+        axes[2].plot(k, e.parent, "ko", ms=3)
+        axes[2].plot(k, e.child_1, "b.", ms=3)
+        axes[2].plot(k, e.child_3, "r.", ms=3)
+        axes[2].plot(k, e.child_1 + e.child_3, "g+", ms=5)
+    axes[2].set(
+        xlabel="Located transition endpoint",
+        ylabel="J [input length units]",
+        title="Parent (black), children (blue/red), sum (+)",
+    )
+    fig.savefig(path, dpi=150)
+    plt.close(fig)

@@ -1,0 +1,348 @@
+[
+  {
+    "revision": "a1f83fc50d05ce28ff1edc8b71b1fd09af550a71",
+    "source_hashes": {
+      "src/alpha_analysis_3/__init__.py": "cad41e41dc02a6bb1b517bbf8ebb463a8401eadd5a1a66332a86e57405ed2ddf",
+      "src/alpha_analysis_3/boozer_field.py": "1132eeb1e3e528dde2bfd6b5490d0e118cc02a05852de68a60e1c4423e1ad2ac",
+      "src/alpha_analysis_3/conventions.py": "6240892864f492464f89cfb1bff80a39ba3588e1a5ed3b1650c5ea02ed7a0c58",
+      "src/alpha_analysis_3/tables.py": "c6edecf82271e1e1796cea943e829a4d7d2dad5cf394f84314369c1572541c14",
+      "src/alpha_analysis_3/diagnostics.py": "7d8ee11c8a641b6d28c138014eb17225416c01d8227293c92504eeb1fe741957",
+      "src/alpha_analysis_3/wells.py": "775c6a1ea5ba71749232b4ee528077038b4d5c96dc38e8246ed69a42947e0251",
+      "src/alpha_analysis_3/ledger.py": "f5afb76c4ee246527657b44bcfaa9aa9570125b4e0bb0ff2b14b9bac00af0f2e",
+      "src/alpha_analysis_3/cells.py": "08795f80acac3f8608ff1f87290c874c86de241a3643b43aabb20ee48cde103f",
+      "src/alpha_analysis_3/transitions.py": "4b112611715f196da4d4085f10b6c838767adc3f10120d1f0a3d3d56cc1ca0cf",
+      "src/alpha_analysis_3/ridge.py": "af65b257cdcad970b8a737b51555b7313a499dde446a1db007a130ccd5b1516a",
+      "src/alpha_analysis_3/chains.py": "5c28aa5eaa0f5e310f14b18b4c0548502a2b42740999b47d1b1afe55af7d1d5a"
+    },
+    "controls": {
+      "file": "PCA",
+      "output": "outputs/m2/coverage-active-PCA.json",
+      "nodes": 256,
+      "surfaces": 24,
+      "max_surfaces": 96,
+      "table": 512,
+      "volume_phi": 2048,
+      "volume_theta_factor": 4,
+      "control": 0.0025,
+      "geometric_tolerance": 0.0005,
+      "cut_probe": false,
+      "plots": null,
+      "depth": 3,
+      "levels": [
+        0.05,
+        0.1,
+        0.5,
+        0.8,
+        0.9,
+        0.95
+      ]
+    },
+    "workers": 1,
+    "source": "h(sqrt(s))=(1-s)^4; h=1 alongside",
+    "scope": "M2 coverage and cut cells; no reachability or f",
+    "failures": [
+      [
+        "PCA",
+        0.95,
+        "uniform"
+      ],
+      [
+        "PCA",
+        0.95,
+        "peaked"
+      ]
+    ],
+    "raw_sha256": "e7f3fcbe74e6e336445e0e994efbabf11d6afd7149b1dca56b2f7a6df0ab3206",
+    "runs": [
+      {
+        "file": "PCA",
+        "seconds": 462.27714777300025,
+        "setup_seconds": 157.2622498159999,
+        "insertions": [
+          0.1691304347826087,
+          0.2117391304347826,
+          0.7656521739130435,
+          0.15847826086956524,
+          0.22239130434782606,
+          0.15315217391304348,
+          0.22771739130434782,
+          0.15581521739130436,
+          0.22505434782608694,
+          0.1571467391304348,
+          0.22372282608695648,
+          0.1564809782608696,
+          0.22305706521739127
+        ],
+        "radii": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.15315217391304348,
+          0.15581521739130436,
+          0.1564809782608696,
+          0.1571467391304348,
+          0.15847826086956524,
+          0.1691304347826087,
+          0.19043478260869565,
+          0.2117391304347826,
+          0.22239130434782606,
+          0.22305706521739127,
+          0.22372282608695648,
+          0.22505434782608694,
+          0.22771739130434782,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7656521739130435,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "peak_rss_gb": 0.7869071360000001,
+        "snapshots": [
+          {
+            "seconds": 60,
+            "stage": "PCA surface s=0.446087, nodes=408",
+            "rss_gb": 0.280489984
+          },
+          {
+            "seconds": 180,
+            "stage": "PCA lambda=0.05",
+            "rss_gb": 0.760471552
+          },
+          {
+            "seconds": 300,
+            "stage": "PCA lambda=0.1",
+            "rss_gb": 0.7646617600000001
+          }
+        ],
+        "fold_summary": {
+          "count": 454,
+          "failed": [],
+          "max_residual": 1.0542677841840487e-12
+        }
+      }
+    ]
+  },
+  {
+    "revision": "a1f83fc50d05ce28ff1edc8b71b1fd09af550a71",
+    "source_hashes": {
+      "src/alpha_analysis_3/__init__.py": "cad41e41dc02a6bb1b517bbf8ebb463a8401eadd5a1a66332a86e57405ed2ddf",
+      "src/alpha_analysis_3/boozer_field.py": "1132eeb1e3e528dde2bfd6b5490d0e118cc02a05852de68a60e1c4423e1ad2ac",
+      "src/alpha_analysis_3/conventions.py": "6240892864f492464f89cfb1bff80a39ba3588e1a5ed3b1650c5ea02ed7a0c58",
+      "src/alpha_analysis_3/tables.py": "1e45164ed7f32f77c990e86332ad8d8f0d586421a5a8b15060fdfb4eac12c1ee",
+      "src/alpha_analysis_3/diagnostics.py": "7d8ee11c8a641b6d28c138014eb17225416c01d8227293c92504eeb1fe741957",
+      "src/alpha_analysis_3/wells.py": "775c6a1ea5ba71749232b4ee528077038b4d5c96dc38e8246ed69a42947e0251",
+      "src/alpha_analysis_3/ledger.py": "1d7da76b0dc6e69586e73ead8dbdddf3c88fca88b57827cea34e249a75d30867",
+      "src/alpha_analysis_3/cells.py": "08795f80acac3f8608ff1f87290c874c86de241a3643b43aabb20ee48cde103f",
+      "src/alpha_analysis_3/transitions.py": "aac8b328118dcc239f1ae47e0dc4d3f83eda9ee0b09fb75cd366915e0c3ccfa0",
+      "src/alpha_analysis_3/ridge.py": "af65b257cdcad970b8a737b51555b7313a499dde446a1db007a130ccd5b1516a",
+      "src/alpha_analysis_3/chains.py": "5c28aa5eaa0f5e310f14b18b4c0548502a2b42740999b47d1b1afe55af7d1d5a"
+    },
+    "controls": {
+      "file": "PCA",
+      "output": "outputs/m2/coverage-PCA512-95.json",
+      "nodes": 512,
+      "surfaces": 24,
+      "max_surfaces": 72,
+      "table": 512,
+      "volume_phi": 2048,
+      "volume_theta_factor": 4,
+      "control": 0.0025,
+      "geometric_tolerance": 0.0005,
+      "cut_probe": false,
+      "plots": null,
+      "depth": 3,
+      "levels": [
+        0.95
+      ]
+    },
+    "workers": 1,
+    "source": "h(sqrt(s))=(1-s)^4; h=1 alongside",
+    "scope": "M2 coverage and cut cells; no reachability or f",
+    "failures": [
+      [
+        "PCA",
+        0.95,
+        "peaked"
+      ]
+    ],
+    "raw_sha256": "68a3a98c382bed483b040ad3c8cc0c59fe26d3f29273653f107b9a68024f08e1",
+    "runs": [
+      {
+        "file": "PCA",
+        "seconds": 192.99385982399963,
+        "setup_seconds": 168.53111290499965,
+        "insertions": [],
+        "radii": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "peak_rss_gb": 0.70627328,
+        "snapshots": [
+          {
+            "seconds": 60,
+            "stage": "PCA surface s=0.147826, nodes=1008",
+            "rss_gb": 0.229015552
+          },
+          {
+            "seconds": 180,
+            "stage": "PCA lambda=0.95",
+            "rss_gb": 0.706183168
+          }
+        ],
+        "fold_summary": {
+          "count": 304,
+          "failed": [],
+          "max_residual": 1.0542677841840487e-12
+        }
+      }
+    ]
+  },
+  {
+    "revision": "a1f83fc50d05ce28ff1edc8b71b1fd09af550a71",
+    "source_hashes": {
+      "src/alpha_analysis_3/__init__.py": "cad41e41dc02a6bb1b517bbf8ebb463a8401eadd5a1a66332a86e57405ed2ddf",
+      "src/alpha_analysis_3/boozer_field.py": "1132eeb1e3e528dde2bfd6b5490d0e118cc02a05852de68a60e1c4423e1ad2ac",
+      "src/alpha_analysis_3/conventions.py": "6240892864f492464f89cfb1bff80a39ba3588e1a5ed3b1650c5ea02ed7a0c58",
+      "src/alpha_analysis_3/tables.py": "1e45164ed7f32f77c990e86332ad8d8f0d586421a5a8b15060fdfb4eac12c1ee",
+      "src/alpha_analysis_3/diagnostics.py": "7d8ee11c8a641b6d28c138014eb17225416c01d8227293c92504eeb1fe741957",
+      "src/alpha_analysis_3/wells.py": "775c6a1ea5ba71749232b4ee528077038b4d5c96dc38e8246ed69a42947e0251",
+      "src/alpha_analysis_3/ledger.py": "1d7da76b0dc6e69586e73ead8dbdddf3c88fca88b57827cea34e249a75d30867",
+      "src/alpha_analysis_3/cells.py": "f41eaea4f19c5f11cb347a75ed581c6f67b9d8c62c96f8fcb75674c622e2be56",
+      "src/alpha_analysis_3/transitions.py": "3a70fb4d58ce43f17a0ec44f901965dd453323653fe932b1caae139f33a2b6a7",
+      "src/alpha_analysis_3/ridge.py": "af65b257cdcad970b8a737b51555b7313a499dde446a1db007a130ccd5b1516a",
+      "src/alpha_analysis_3/chains.py": "5c28aa5eaa0f5e310f14b18b4c0548502a2b42740999b47d1b1afe55af7d1d5a"
+    },
+    "controls": {
+      "file": "PCA",
+      "output": "outputs/m2/coverage-PCA1024-95.json",
+      "nodes": 1024,
+      "surfaces": 24,
+      "max_surfaces": 64,
+      "chain_budget_mib": 1024,
+      "table": 512,
+      "volume_phi": 2048,
+      "volume_theta_factor": 4,
+      "control": 0.0025,
+      "geometric_tolerance": 0.0005,
+      "cut_probe": false,
+      "plots": null,
+      "depth": 3,
+      "levels": [
+        0.95
+      ]
+    },
+    "workers": 1,
+    "source": "h(sqrt(s))=(1-s)^4; h=1 alongside",
+    "scope": "M2 coverage and cut cells; no reachability or f",
+    "failures": [],
+    "raw_sha256": "4e8fcbf1d2ea42522dd0a6ce599214c9c9eb92f05ea07594fbf435e6c2b0bf5b",
+    "runs": [
+      {
+        "file": "PCA",
+        "seconds": 434.4654973190004,
+        "setup_seconds": 385.2678538839996,
+        "insertions": [],
+        "radii": [
+          0.001,
+          0.0021147425268811283,
+          0.00447213595499958,
+          0.00945741609003176,
+          0.02,
+          0.06260869565217392,
+          0.10521739130434783,
+          0.14782608695652175,
+          0.19043478260869565,
+          0.23304347826086955,
+          0.27565217391304353,
+          0.31826086956521743,
+          0.36086956521739133,
+          0.40347826086956523,
+          0.44608695652173913,
+          0.4886956521739131,
+          0.531304347826087,
+          0.5739130434782609,
+          0.6165217391304348,
+          0.6591304347826087,
+          0.7017391304347826,
+          0.7443478260869566,
+          0.7869565217391304,
+          0.8295652173913044,
+          0.8721739130434782,
+          0.9147826086956522,
+          0.9573913043478262,
+          1.0
+        ],
+        "peak_rss_gb": 0.846352384,
+        "retained_chain_bytes": 192443536,
+        "snapshots": [
+          {
+            "seconds": 60,
+            "stage": "PCA surface s=0.00211474, nodes=2882",
+            "rss_gb": 0.18520064
+          },
+          {
+            "seconds": 180,
+            "stage": "PCA surface s=0.233043, nodes=1738",
+            "rss_gb": 0.31234048000000003
+          },
+          {
+            "seconds": 300,
+            "stage": "PCA surface s=0.744348, nodes=1787",
+            "rss_gb": 0.46950809600000004
+          }
+        ],
+        "fold_summary": {
+          "count": 304,
+          "failed": [],
+          "max_residual": 1.0542677841840487e-12
+        }
+      }
+    ]
+  }
+]

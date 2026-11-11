@@ -23,6 +23,7 @@ class Ridge:
     dalpha: np.ndarray | None = None
     measure: np.ndarray | None = None
     endpoints: np.ndarray | None = None
+    folds_resolved: np.ndarray | None = None
 
 
 def _same(a, b, tol=1e-7):

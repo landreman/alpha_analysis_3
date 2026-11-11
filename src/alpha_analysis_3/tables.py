@@ -121,6 +121,19 @@ class Surface:
         if np.min(self.B) <= 0:
             raise ValueError("B must be strictly positive")
         self.Bmin, self.Bmax = float(self.B.min()), float(self.B.max())
+        # At a true angular extremum the gradient vanishes. Taylor's theorem
+        # from that point to its nearest FFT grid point bounds the difference
+        # by half the Fourier Hessian envelope times the squared displacement.
+        # This cheap bound safely rejects b below the surface minimum without
+        # missing a narrow below-b pocket between table nodes.
+        phase_step = (
+            np.abs(self.m) * TWO_PI / nt + np.abs(self.n / self.nfp) * TWO_PI / nphi
+        )
+        amplitude = np.hypot(self.c, self.d)
+        self.extremum_grid_error = float(
+            np.sum(amplitude * phase_step**2) / 8
+            + 64 * np.finfo(float).eps * np.sum(amplitude)
+        )
         self._coeff = [spline_filter(a, order=3, mode="grid-wrap") for a in arrays]
         self._corrections = corrections
 
