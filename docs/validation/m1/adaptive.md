@@ -110,6 +110,15 @@ at production density, within 6%. We do not claim that its 128-node estimate
 converged. Both checks remain mandatory for an accepted production estimate;
 the driver still exits nonzero when either fails.
 
+At production density, n3are lambda_n=0.5 reveals two residual capped nodes
+at 256 periods. Its two source ledgers are **incomplete**, not finite passing
+ratios. Under ADR 0001 their resolved-plus-partial-lower/reference values are
+0.99442 (uniform) and 0.98166 (peaked), satisfying the required upper inequality.
+Their transverse changes are 0.3964% and 0.4392%. The 58 other selected
+production source checks have finite ratios. The base grid has no residual
+capped node; its finite ledger closure does not exclude narrow unknown strips
+revealed at higher density.
+
 ## Results
 
 <!-- RESULTS -->

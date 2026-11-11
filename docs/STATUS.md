@@ -23,6 +23,11 @@ wells retain unknown full J/K with a separate partial-K lower bound. All four
 original capped nodes now exit. The [initial failed evidence](validation/m1/README.md)
 is archived, not overwritten.
 
+The denser n3are lambda_n=0.5 production case has two residual capped nodes at
+256 periods. Both source ledgers remain incomplete and meet ADR 0001's
+resolved-plus-lower-bound inequality; the other 58 production source checks
+have finite ratios. No unknown full weight is replaced with that lower bound.
+
 M2 must build bidirectional coverage, transitions and transition-cut cells.
 The current one-direction partners, raw T/Gamma mismatches and frontier weights
 are reported diagnostics, not complete coverage or connectivity. Auxiliary

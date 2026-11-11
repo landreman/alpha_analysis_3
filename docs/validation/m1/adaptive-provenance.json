@@ -8524,7 +8524,22 @@
     "production_ledger_failures": [],
     "production_refinement_failures": [],
     "base_cases": 30,
-    "production_cases": 30
+    "production_cases": 30,
+    "production_finite_ratios": 58,
+    "production_incomplete_sources": [
+      {
+        "file": "n3are",
+        "lambda_n": 0.5,
+        "source": "uniform",
+        "capped_nodes": 2
+      },
+      {
+        "file": "n3are",
+        "lambda_n": 0.5,
+        "source": "peaked",
+        "capped_nodes": 2
+      }
+    ]
   },
   "current_source_hashes": {
     "src/alpha_analysis_3/__init__.py": "cad41e41dc02a6bb1b517bbf8ebb463a8401eadd5a1a66332a86e57405ed2ddf",
