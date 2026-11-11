@@ -19,6 +19,8 @@ from alpha_analysis_3.boozer_field import BoozerField
 from alpha_analysis_3.tables import Surface, global_extrema
 from alpha_analysis_3.ridge import ridge_arcs, place_nodes
 from alpha_analysis_3.transitions import surface_transitions
+from alpha_analysis_3.cells import polish_folds
+from types import SimpleNamespace
 from validate_m1 import Watchdog
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -69,6 +71,9 @@ def run(args):
             for s in radii:
                 sf = Surface(field, s, args.table, args.table)
                 arcs = place_nodes(sf, ridge_arcs(sf), args.nodes / (2 * np.pi))
+                fold_records = polish_folds(
+                    SimpleNamespace(layers=[SimpleNamespace(surface=sf, arcs=arcs)])
+                )
                 for level in args.levels:
                     guard.stage = f"{entry['id']} s={s:.8g} lambda={level}"
                     t = time.monotonic()
@@ -90,6 +95,10 @@ def run(args):
                         factor=result.factor,
                         samples=result.samples,
                         failures=result.failures,
+                        fold_records=fold_records,
+                        unknown_weight_per_ds=result.unknown_weight_per_ds,
+                        resolved_unknown_weight_per_ds=result.resolved_unknown_weight_per_ds,
+                        total_resolved_weight_per_ds=result.total_resolved_weight_per_ds,
                         unknown_geometry=[
                             dict(
                                 left=a.point.tolist(),
@@ -107,6 +116,7 @@ def run(args):
                                 child_1=e.child_1,
                                 child_3=e.child_3,
                                 width=e.width,
+                                height_residual=e.height_residual,
                             )
                             for e in result.events
                         ],

@@ -10,7 +10,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from .chains import trace_chains
-from .wells import ACTIVE, FAILED, adaptive_wells_at_pitch
+from .wells import ACTIVE, INACTIVE, FAILED, adaptive_wells_at_pitch
 
 
 @dataclass
@@ -37,6 +37,7 @@ class Transition:
     child_3: float
     width: float
     reason: str
+    height_residual: float = np.nan
 
 
 def sample_states(surface, points, b, order=64, max_periods=256):
@@ -230,15 +231,55 @@ def locate_transition(surface, left, right, b, tolerance=1e-8, order=64):
     residual = abs(long.J - short.J - child_action)
     if residual > 2e-6 * max(abs(long.J), 1e-12):
         return failure("bank actions fail additivity", width)
+    point = (a.point + c.point) / 2
+    critical_sf = surface(float(point[0])) if radial else surface
+    angles = point[-2:].copy()
+    flow = np.array([critical_sf.iota, critical_sf.nfp])
+    for _ in range(12):
+        d1 = float(critical_sf.exact(*angles, 1))
+        d2 = float(critical_sf.exact(*angles, 2))
+        if abs(d1) < 1e-12:
+            break
+        if d2 >= 0:
+            return failure("critical starting ridge is unresolved", width)
+        angles -= np.clip(d1 / d2, -0.02, 0.02) * flow
+    if np.linalg.norm(angles - point[-2:]) > max(width, tolerance):
+        return failure("critical ridge projection exceeds location bracket", width)
+    if (
+        abs(float(critical_sf.exact(*angles, 1))) > 1e-8
+        or float(critical_sf.exact(*angles, 2)) >= 0
+    ):
+        return failure("critical starting maximum did not polish", width)
+    point = point.copy()
+    point[-2:] = angles
+    z = float(long.max_z[k])
+    for _ in range(12):
+        y = angles + z * flow
+        d1 = float(critical_sf.exact(*y, 1))
+        d2 = float(critical_sf.exact(*y, 2))
+        if d2 >= 0:
+            return failure("critical interior maximum is unresolved", width)
+        if abs(d1) < 1e-12:
+            break
+        z -= np.clip(d1 / d2, -0.02, 0.02)
+    y = angles + z * flow
+    previous = 0.0 if k == 0 else long.max_z[k - 1]
+    gap = min(abs(long.max_z[k] - previous), abs(long.max_z[k + 1] - long.max_z[k]))
+    if abs(z - long.max_z[k]) > 0.25 * gap:
+        return failure("critical partner changed maximum identity", width)
+    if abs(float(critical_sf.exact(*y, 1))) > 1e-8:
+        return failure("critical interior maximum did not polish", width)
+    partner = np.r_[point[0], y] if radial else y
     return Transition(
         True,
-        (a.point + c.point) / 2,
-        child.point,
+        point,
+        partner,
         long.J,
         short.J,
         child_action,
         width,
         "",
+        float(critical_sf.exact(*y)) - b,
     )
 
 
@@ -314,6 +355,9 @@ class SurfaceTransitions:
     factor: int
     samples: int
     failures: list
+    unknown_weight_per_ds: float
+    resolved_unknown_weight_per_ds: float
+    total_resolved_weight_per_ds: float
 
 
 def surface_transitions(surface, arcs, b, max_factor=16, order=32, tolerance=1e-8):
@@ -325,13 +369,38 @@ def surface_transitions(surface, arcs, b, max_factor=16, order=32, tolerance=1e-
     """
     if max_factor not in (1, 2, 4, 8, 16):
         raise ValueError("transition refinement factor must be dyadic and <=16")
+    if not np.isfinite(b) or b <= 0:
+        raise ValueError("bounce field must be positive and finite")
+    if (
+        b <= surface.Bmin - surface.extremum_grid_error
+        or b >= surface.Bmax + surface.extremum_grid_error
+    ):
+        # Fourier grid-extremum bounds establish an empty active set; this
+        # does not infer passing from a capped or finite field-line search.
+        return SurfaceTransitions([], [], 0, 0, 1, 0, [], 0.0, 0.0, 0.0)
     segments = []
+    folds = {}
+    unresolved_folds = []
+
+    def key(p):
+        return tuple(np.round(np.asarray(p) % (2 * np.pi), 12))
+
     for arc in arcs:
         for k in range(len(arc.points) if arc.closed else len(arc.points) - 1):
             a, c = arc.points[k], arc.points[(k + 1) % len(arc.points)].copy()
             if arc.closed and k == len(arc.points) - 1:
                 c += 2 * np.pi * np.array(arc.wind)
             segments.append((a, c))
+        if not arc.closed and arc.folds_resolved is not None:
+            for end, node in ((0, 0), (1, -1)):
+                if arc.folds_resolved[end]:
+                    p = arc.endpoints[end]
+                    folds[key(p)] = float(surface.b(*p))
+                    segments.append((p, arc.points[node]))
+        if not arc.closed and arc.endpoints is not None:
+            for end, node in ((0, 0), (1, -1)):
+                if arc.folds_resolved is None or not arc.folds_resolved[end]:
+                    unresolved_folds.append((arc.endpoints[end], arc.points[node]))
     factor = 1
     while True:
         edges = []
@@ -341,7 +410,31 @@ def surface_transitions(surface, arcs, b, max_factor=16, order=32, tolerance=1e-
         states = []
         points = np.asarray(edges).reshape(-1, 2)
         for j in range(0, len(points), 1024):
-            states.extend(sample_states(surface, points[j : j + 1024], b, order))
+            batch = points[j : j + 1024]
+            regular = [i for i, p in enumerate(batch) if key(p) not in folds]
+            sampled = sample_states(surface, batch[regular], b, order)
+            iterator = iter(sampled)
+            for p in batch:
+                if key(p) in folds:
+                    # A verified generic fold is not a trapped starting well:
+                    # its first maximum and minimum coincide. This creates an
+                    # explicit boundary state, never repairs a failed well.
+                    states.append(
+                        State(
+                            p,
+                            INACTIVE,
+                            np.nan,
+                            np.nan,
+                            np.nan,
+                            np.nan,
+                            -1,
+                            np.array([np.nan]),
+                            np.array([np.nan]),
+                            folds[key(p)],
+                        )
+                    )
+                else:
+                    states.append(next(iterator))
         pairs = list(zip(states[::2], states[1::2]))
         nt = sum(interior_barrier(a, c) is not None for a, c in pairs)
         ng = sum((a.H > b) != (c.H > b) for a, c in pairs)
@@ -397,4 +490,56 @@ def surface_transitions(surface, arcs, b, max_factor=16, order=32, tolerance=1e-
     # Account the entire surface as unresolved, rather than choose an edge.
     if nt != ng:
         unknown = pairs
-    return SurfaceTransitions(events, unknown, nt, ng, factor, len(states), failures)
+    for fold, node in unresolved_folds:
+        state = State(
+            fold,
+            FAILED,
+            np.nan,
+            np.nan,
+            np.nan,
+            np.nan,
+            -1,
+            np.array([np.nan]),
+            np.array([np.nan]),
+            float(surface.b(*fold)),
+        )
+        other = sample_states(surface, [node], b, order)[0]
+        unknown.append((state, other))
+        failures.append(
+            dict(
+                reason="unresolved fold endpoint",
+                left=fold.tolist(),
+                right=node.tolist(),
+            )
+        )
+
+    def population(edges):
+        total = 0.0
+        complete = True
+        for a, c in edges:
+            width = abs(
+                c.point[0]
+                - a.point[0]
+                - surface.iota * (c.point[1] - a.point[1]) / surface.nfp
+            )
+            for state in (a, c):
+                if state.status == ACTIVE and np.isfinite(state.K):
+                    total += width * state.K / 2
+                elif state.status != INACTIVE:
+                    complete = False
+        return total, complete
+
+    unknown_resolved, complete = population(unknown)
+    total, _ = population(pairs)
+    return SurfaceTransitions(
+        events,
+        unknown,
+        nt,
+        ng,
+        factor,
+        len(states),
+        failures,
+        unknown_resolved if complete else np.nan,
+        unknown_resolved,
+        total,
+    )

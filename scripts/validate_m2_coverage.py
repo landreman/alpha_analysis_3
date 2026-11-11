@@ -86,30 +86,20 @@ def run(args):
                 nphi=args.table,
                 density=density,
                 progress=progress,
+                chain_budget_bytes=args.chain_budget_mib * 1024**2,
             )
             fold_records = polish_folds(geometry)
             insertions = []
+            active_fields = [
+                geometry.Bmin + v * (geometry.Bmax - geometry.Bmin) for v in args.levels
+            ]
             while len(geometry.s) < args.max_surfaces:
-                indicators = geometric_frontier(geometry, density)
+                indicators = geometric_frontier(geometry, density, active_fields)
                 # Open-fold tails need angular refinement, not repeated
                 # insertion into the same radial intervals.
                 candidates = []
                 for row in indicators:
-                    i = int(np.searchsorted(geometry.s, row["s_bottom"]))
-                    a, c = geometry.layers[i : i + 2]
-                    mesh = stitch_ridges(
-                        a.arcs,
-                        c.arcs,
-                        geometry.s[i],
-                        geometry.s[i + 1],
-                        a.surface.iota,
-                        c.surface.iota,
-                        a.surface.nfp,
-                        density,
-                    )
-                    partner = row["frontier_measure"] - sum(
-                        v for _, v in mesh.fold_gaps
-                    )
+                    partner = row["partner_frontier_measure"]
                     if partner > 0:
                         candidates.append(
                             (partner, (row["s_bottom"] + row["s_top"]) / 2)
@@ -206,6 +196,7 @@ def run(args):
                         b,
                         max_depth=args.depth,
                         max_cells=20000,
+                        frontier_faces=mesh.unknown_faces,
                     )
                     kinds = {
                         kind: sum(c.kind == kind for c in probe.cells)
@@ -266,6 +257,7 @@ def run(args):
                     fold_records=fold_records,
                     radii=geometry.s.tolist(),
                     peak_rss_gb=guard.peak,
+                    retained_chain_bytes=geometry.chain_budget.retained_bytes,
                     snapshots=guard.snapshots,
                 )
             )
@@ -302,6 +294,7 @@ if __name__ == "__main__":
     p.add_argument("--nodes", type=int, default=128)
     p.add_argument("--surfaces", type=int, default=24)
     p.add_argument("--max-surfaces", type=int, default=96)
+    p.add_argument("--chain-budget-mib", type=int, default=768)
     p.add_argument("--table", type=int, default=512)
     p.add_argument("--volume-phi", type=int, default=1024)
     p.add_argument("--volume-theta-factor", type=int, default=4)

@@ -514,6 +514,8 @@ def volume_surface(surface, b, nphi=512, order=64, theta_factor=1):
     """
     if theta_factor not in (1, 2, 4, 8, 16):
         raise ValueError("volume theta refinement must be dyadic and <=16")
+    if surface.Bmin - surface.extremum_grid_error >= b:
+        return 0.0
     if surface.Bmax <= b:
         return 0.0
     phi = (np.arange(nphi) + 0.5) * TWO_PI / nphi

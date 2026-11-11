@@ -322,6 +322,7 @@ def cut_cells(
     order=32,
     expected_variation=None,
     max_cells=100000,
+    frontier_faces=None,
 ):
     """Split two-cut triangles into banks; subdivide one-/three-cut cells.
 
@@ -373,6 +374,13 @@ def cut_cells(
         )
 
     faces = np.asarray(faces, float).reshape(-1, 3, 3)
+    frontier_faces = (
+        np.zeros(len(faces), bool)
+        if frontier_faces is None
+        else np.asarray(frontier_faces, bool)
+    )
+    if frontier_faces.shape != (len(faces),):
+        raise ValueError("frontier mask must identify every input face")
     vertices = np.unique(faces.reshape(-1, 3), axis=0)
     # Evaluate boundary vertices in surface batches before edge bisections
     # start evicting temporary tables. Chain storage stays bounded per batch.
@@ -411,6 +419,11 @@ def cut_cells(
     while pending:
         p, depth, parent_face = pending.pop()
         states = [sample(x) for x in p]
+        if frontier_faces[parent_face]:
+            retain(
+                p, states, "unknown", depth, parent_face, "frontier or uncovered strip"
+            )
+            continue
         classifications = [
             well_assignment(
                 states[j],
@@ -433,7 +446,11 @@ def cut_cells(
         if not cuts and all(k == "regular" for k in classifications):
             retain(p, states, "regular", depth, parent_face)
             continue
-        if len(cuts) == 2 and all(x.status == ACTIVE for x in states):
+        if (
+            len(cuts) == 2
+            and all(x.status == ACTIVE for x in states)
+            and len(pending) + len(cells) + 2 <= max_cells
+        ):
             located = {}
             for j in cuts:
 
@@ -504,13 +521,14 @@ def cut_cells(
                     )
                 continue
         if depth == max_depth or len(pending) + len(cells) + 4 > max_cells:
+            limit = "subdivision ceiling" if depth == max_depth else "cell budget"
             retain(
                 p,
                 states,
                 "unknown",
                 depth,
                 parent_face,
-                f"{len(cuts)} cuts; edges {','.join(classifications)}",
+                f"{limit}; {len(cuts)} cuts; edges {','.join(classifications)}",
             )
             continue
         a, c, d = p
@@ -678,13 +696,27 @@ def insert_surfaces(
     ]
 
 
-def geometric_frontier(geometry, density=128 / TWO_PI):
+def geometric_frontier(geometry, density=128 / TWO_PI, active_fields=None):
     """Return unknown transverse area by strip to guide surface insertion.
 
     This is a geometric refinement indicator, never a population-weight or
     connectivity error bound. Open-fold end strips are retained explicitly.
     """
     result = []
+    activity = []
+    for layer in geometry.layers:
+        if active_fields is None:
+            activity.append(np.ones(len(layer.H), bool))
+        else:
+            b = np.asarray(active_fields, float)
+            m = layer.chain.min_H[:, 0]
+            activity.append(
+                np.any(
+                    (layer.H[:, None] > b)
+                    & ((m[:, None] < b) | ~np.isfinite(m[:, None])),
+                    axis=1,
+                )
+            )
     for i, (a, c) in enumerate(zip(geometry.layers, geometry.layers[1:])):
         mesh = stitch_ridges(
             a.arcs,
@@ -701,17 +733,30 @@ def geometric_frontier(geometry, density=128 / TWO_PI):
             ds
             / 2
             * (
-                a.measure[mesh.frontier_bottom].sum()
-                + c.measure[mesh.frontier_top].sum()
+                a.measure[mesh.frontier_bottom & activity[i]].sum()
+                + c.measure[mesh.frontier_top & activity[i + 1]].sum()
             )
         )
-        unknown += sum(area for _, area in mesh.fold_gaps)
+        partner_unknown = unknown
+        nb = len(a.points)
+        fold_unknown = sum(
+            area
+            for node, area in mesh.fold_gaps
+            if (activity[i][node] if node < nb else activity[i + 1][node - nb])
+        )
+        unknown += fold_unknown
         result.append(
             dict(
                 s_bottom=float(geometry.s[i]),
                 s_top=float(geometry.s[i + 1]),
                 frontier_measure=float(unknown),
-                total_measure=float(ds / 2 * (a.measure.sum() + c.measure.sum())),
+                partner_frontier_measure=float(partner_unknown),
+                fold_frontier_measure=float(fold_unknown),
+                total_measure=float(
+                    ds
+                    / 2
+                    * (a.measure[activity[i]].sum() + c.measure[activity[i + 1]].sum())
+                ),
                 census_change=len(a.arcs) != len(c.arcs),
             )
         )

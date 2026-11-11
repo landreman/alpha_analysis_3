@@ -61,7 +61,9 @@ def test_open_arcs_align_orientation_and_include_polished_folds():
         sine=(0, -2, 0.25, -0.25, 1),
         iota=0,
     )
-    g = Geometry(field, [0.2, 0.6], nt=64, nphi=64, density=32 / (2 * np.pi), periods=3)
+    g = Geometry(
+        field, [0.2, 0.6], nt=128, nphi=128, density=32 / (2 * np.pi), periods=3
+    )
     records = polish_folds(g)
     assert records and all(r["resolved"] for r in records)
     for layer in g.layers:
@@ -70,6 +72,21 @@ def test_open_arcs_align_orientation_and_include_polished_folds():
                 np.testing.assert_allclose(np.cos(arc.endpoints[:, 0]), 0, atol=1e-10)
                 np.testing.assert_allclose(np.sin(arc.endpoints[:, 1]), 0, atol=1e-10)
     a, c = [l.arcs for l in g.layers]
+    from alpha_analysis_3.transitions import surface_transitions
+    from scipy.optimize import brentq
+
+    def maximum(theta):
+        amplitude = -2 + 0.5 * np.cos(theta)
+        phi = np.arccos((-amplitude + np.sqrt(amplitude**2 + 32)) / 8)
+        return 6 + amplitude * np.sin(phi) + np.sin(2 * phi)
+
+    crossing = brentq(lambda t: maximum(t) - 6.01, 0, np.pi / 2)
+    census = surface_transitions(g.layers[0].surface, a, 6.01, max_factor=4, order=64)
+    assert census.transitions == census.gamma_max == 2
+    assert len(census.events) == 2
+    for event in census.events:
+        theta = (event.point[0] + np.pi) % (2 * np.pi) - np.pi
+        assert abs(theta) == pytest.approx(crossing, abs=1e-8)
     for arc in c:
         if not arc.closed:
             arc.points = arc.points[::-1].copy()
@@ -94,6 +111,11 @@ def test_transition_cut_cells_keep_separate_banks():
     assert len(set(result.cells[0].vertex_ids) & set(result.cells[1].vertex_ids)) == 2
     for event in result.transitions[0]:
         assert event.parent == pytest.approx(event.child_1 + event.child_3, rel=2e-6)
+        assert event.point[0] == event.partner[0]
+        sf = sampler(event.point[0])
+        alpha = lambda p: p[1] - sf.iota * p[2] / sf.nfp
+        assert alpha(event.point) == pytest.approx(alpha(event.partner), abs=1e-12)
+        assert abs(event.height_residual) < 1e-8
 
     def area(p):
         a = p[1:, :2] - p[:1, :2]
@@ -137,6 +159,27 @@ def test_one_cut_cell_subdivides_and_retains_residual_unknown():
     assert len(result.cells) >= 4
     assert any(c.kind == "unknown" for c in result.cells)
     assert all(c.depth == 1 for c in result.cells)
+
+
+def test_frontier_face_cannot_become_regular():
+    from alpha_analysis_3.cells import SurfaceCache, cut_cells
+    from test_m2_transitions import SplitField
+
+    face = np.array([[[0.3, 0.8, 0], [0.6, 0.8, 0], [0.3, 0.9, 0]]])
+    sampler = SurfaceCache(SplitField(), table=64)
+    result = cut_cells(sampler, face, 2.6, frontier_faces=[True])
+    assert len(result.cells) == 1 and result.cells[0].kind == "unknown"
+    assert result.cells[0].reason == "frontier or uncovered strip"
+
+
+def test_cell_budget_retains_transition_as_unknown():
+    from alpha_analysis_3.cells import SurfaceCache, cut_cells
+    from test_m2_transitions import SplitField
+
+    face = np.array([[[0.3, 1.3, 0], [0.6, 1.3, 0], [0.3, 1.8, 0]]])
+    result = cut_cells(SurfaceCache(SplitField(), 64), face, 2.6, max_cells=1)
+    assert len(result.cells) == 1 and result.cells[0].kind == "unknown"
+    assert "cell budget" in result.cells[0].reason
 
 
 def test_three_cut_cell_subdivides_at_crossing_barriers():
@@ -200,6 +243,21 @@ def test_coverage_closes_ledger():
     assert result["frontier_fraction"] == 0
 
 
+def test_volume_minimum_guard_keeps_subgrid_population():
+    from alpha_analysis_3.tables import Surface
+    from alpha_analysis_3.ledger import volume_surface
+    from test_m1_geometry import FourierModel
+
+    phase = 0.003
+    field = FourierModel(c=(2, 0.5 * np.cos(phase)), sine=(0, 0.5 * np.sin(phase)))
+    sf = Surface(field, 0.5, 512, 512)
+    b = 1.5000001
+    assert sf.Bmin > b
+    assert sf.Bmin - sf.extremum_grid_error < b
+    assert volume_surface(sf, b, nphi=8, theta_factor=16) > 0
+    assert volume_surface(sf, 1.4, nphi=8) == 0
+
+
 def test_surface_insertion_repairs_displaced_ridges():
     from alpha_analysis_3.cells import insert_surfaces, geometric_frontier
     from alpha_analysis_3.ledger import Geometry
@@ -217,3 +275,28 @@ def test_surface_insertion_repairs_displaced_ridges():
     assert geometric_frontier(g)[0]["frontier_measure"] > 0
     insert_surfaces(g, f, np.arange(0.2, 0.9, 0.1), density=128 / (2 * np.pi))
     assert sum(r["frontier_measure"] for r in geometric_frontier(g)) == 0
+
+
+def test_refinement_priority_does_not_erase_frontier_weight():
+    from alpha_analysis_3.cells import geometric_frontier, coverage_ledger
+    from alpha_analysis_3.ledger import Geometry, measure_pitch
+    from alpha_analysis_3.conventions import uniform_source
+    from test_m1_geometry import FourierModel
+
+    class MovingRidge(FourierModel):
+        def bmnc(self, s):
+            return np.array([2, 0.5 * np.cos(2 * s)])
+
+        def bmns(self, s):
+            return np.array([0, 0.5 * np.sin(2 * s)])
+
+    g = Geometry(
+        MovingRidge(), [0.1, 0.9], nt=64, nphi=64, density=32 / (2 * np.pi), periods=3
+    )
+    assert geometric_frontier(g)[0]["partner_frontier_measure"] > 0
+    assert (
+        geometric_frontier(g, active_fields=[3.0])[0]["partner_frontier_measure"] == 0
+    )
+    measure = measure_pitch(g, 2.1, retain_edges=True)
+    result = coverage_ledger(g, measure, uniform_source)
+    assert result["frontier_fraction"] == pytest.approx(1.0)

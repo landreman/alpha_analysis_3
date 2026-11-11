@@ -1,0 +1,28 @@
+{
+  "status": "stopped diagnostic setup, no accepted result",
+  "command": "python scripts/validate_m2_coverage.py --file PCA --nodes 256 --max-surfaces 96 --volume-phi 2048 --output outputs/m2/coverage-folds-PCA.json ",
+  "reason": "Geometric-only refinement spent insertion budget on inactive inner layers; replace its priority with active-state measure before completing this attempt.",
+  "source_revision": "a1f83fc50d05ce28ff1edc8b71b1fd09af550a71",
+  "process_memory": [
+    "VmHWM:\t  929740 kB",
+    "VmRSS:\t  909600 kB"
+  ],
+  "log_sha256": "2b1a2c4c0d97e34dff94f671566595098e8723970cecbf02c558aa4afc96219d",
+  "snapshots": [
+    {
+      "seconds": 60,
+      "stage": "PCA surface s=0.488696, nodes=408",
+      "rss_gb": 0.290533376
+    },
+    {
+      "seconds": 180,
+      "stage": "PCA inserted surface s=0.00113934282, nodes=820",
+      "rss_gb": 0.596901888
+    },
+    {
+      "seconds": 300,
+      "stage": "PCA inserted surface s=0.00108708926, nodes=850",
+      "rss_gb": 0.855461888
+    }
+  ]
+}

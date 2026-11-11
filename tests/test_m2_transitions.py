@@ -37,14 +37,17 @@ class SplitField:
         return 0.0
 
     def G(self, s):
-        return 3.0
+        return getattr(self, "current", 3.0)
 
     def I(self, s):
         return 0.0
 
 
-def test_synthetic_split_merge():
-    sf = Surface(SplitField(), 0.5, 64, 64)
+@pytest.mark.parametrize("sign", [-1, 1])
+def test_synthetic_split_merge(sign):
+    field = SplitField()
+    field.current = sign * 3.0
+    sf = Surface(field, 0.5, 64, 64)
     left, right = sample_states(sf, [[1.3, 0], [1.8, 0]], 2.6)
     assert interior_barrier(left, right) is not None
     event = locate_transition(sf, [1.3, 0], [1.8, 0], 2.6, tolerance=2e-9)
@@ -128,6 +131,10 @@ def test_transition_count_matches_gamma_max():
     b = json.loads((root / "data/legacy_probes.json").read_text())["generic_event"]["b"]
     sf = Surface(BoozerField(root / "data" / entry["file"]), 0.8)
     arcs = place_nodes(sf, ridge_arcs(sf), 64 / (2 * np.pi))
+    from types import SimpleNamespace
+    from alpha_analysis_3.cells import polish_folds
+
+    polish_folds(SimpleNamespace(layers=[SimpleNamespace(surface=sf, arcs=arcs)]))
     result = surface_transitions(sf, arcs, b, max_factor=4)
     assert result.transitions == result.gamma_max == 2
     assert len(result.events) == 2 and not result.unknown_edges

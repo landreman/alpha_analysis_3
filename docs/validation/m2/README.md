@@ -60,6 +60,34 @@ remains a failed estimate. Its population excess must be separated from
 independent angular-reference error by refinement; it is not attributed to
 missing coverage alone.
 
+## Repaired PCA evidence
+
+The [refinement table](PCA-refinements.csv) retains the 256-, 512- and
+1024-node attempts and their [provenance](PCA-refinement-provenance.json).
+Polished fold strips remove the measured low-pitch coverage gap. Prioritizing
+active-state measure avoids spending the radial insertion budget on surfaces
+inactive at all six diagnostic pitches; the earlier
+[stopped setup](stopped-setup.json) remains recorded. This priority changes no
+ledger weight or unknown-state classification.
+
+At 256 nodes all six PCA cases meet 1% ledger closure and 0.5% frontier
+coverage for both sources. Lambda_n=0.95 still misses transverse convergence:
+3.06% peaked-source change. At 512 nodes it is 1.38%, still a failure. At
+1024 nodes it is 0.8792% (uniform 0.3632%). The selected 1024-node ratios are
+0.999033 and 0.999260, with zero measured frontier weight. This isolated
+refinement uses the same global b, 28-surface grid, 256-period ceiling and
+16x local-refinement ceiling. Its resident high-water is 0.846 GB; total
+time is 434.5 s, including 385.3 s pitch-independent setup. It is not full-f
+or runtime acceptance. Its configurable chain allocation cap was 1 GiB;
+retained chains at completion occupy 192.4 MB.
+
+The independent reference uses 2048 phi slices and fourfold theta sampling
+of the 512² interpolant. A separate fixed-ridge-weight reference probe varies
+these directions independently. A Fourier-Hessian extremum bound skips
+surfaces whose field is everywhere above b. The subgrid-minimum regression
+ensures this shortcut retains a narrow trapped population missed by the FFT
+grid's sampled minimum.
+
 ## Reproduction
 
 Run from an installed clean environment, one equilibrium at a time:
