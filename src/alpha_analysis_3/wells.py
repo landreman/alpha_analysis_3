@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 import time
 
-from .chains import trace_chains, chain_rows, replace_chain_rows
+from .chains import trace_chains, chain_bytes, replace_chain_rows
 
 import numpy as np
 
@@ -155,7 +155,15 @@ def wells_at_pitch(surface, theta, phi, heights, chain, b, order=64):
 
 
 def adaptive_wells_at_pitch(
-    surface, theta, phi, heights, chain, b, order=64, max_periods=256
+    surface,
+    theta,
+    phi,
+    heights,
+    chain,
+    b,
+    order=64,
+    max_periods=256,
+    allocation_check=None,
 ):
     """ADR 0001: double only capped chains up to a finite ceiling.
 
@@ -188,8 +196,26 @@ def adaptive_wells_at_pitch(
                     phi[selected],
                     int(target),
                     chain.samples_per_period,
+                    allocation_check=(
+                        (lambda size: allocation_check(chain, size))
+                        if allocation_check is not None
+                        else None
+                    ),
                 )
-                chain = replace_chain_rows(chain, selected, traced)
+                chain = replace_chain_rows(
+                    chain,
+                    selected,
+                    traced,
+                    allocation_check=(
+                        (
+                            lambda size: allocation_check(
+                                chain, size + chain_bytes(traced)
+                            )
+                        )
+                        if allocation_check is not None
+                        else None
+                    ),
+                )
                 new = wells_at_pitch(
                     surface,
                     theta[selected],
@@ -210,6 +236,7 @@ def adaptive_wells_at_pitch(
                 ):
                     getattr(well, name)[selected] = getattr(new, name)
                 extended.update(selected.tolist())
+                del traced, new
     finally:
         if not had_derivatives:
             surface.release_derivatives()

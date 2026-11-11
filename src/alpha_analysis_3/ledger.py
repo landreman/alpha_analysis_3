@@ -12,7 +12,7 @@ import time
 import numpy as np
 from scipy.integrate import trapezoid
 
-from .chains import trace_chains
+from .chains import ChainBudget, trace_chains
 from .conventions import source_at_s
 from .ridge import place_nodes, radial_partners, ridge_arcs
 from .tables import Surface, TWO_PI, global_extrema
@@ -34,6 +34,7 @@ class Layer:
     points: np.ndarray
     H: np.ndarray
     measure: np.ndarray
+    chain_budget: object = None
 
 
 @dataclass
@@ -123,6 +124,7 @@ def _refine_layer(
     weighted radial sum. No volume-reference values enter this calculation.
     """
     sf = layer.surface
+    budget = layer.chain_budget
     point, periods = _point_weights(sf, well, layer.chain)
     base = layer.measure @ point
     long = (periods > 64) | (well.status == CAPPED)
@@ -241,12 +243,24 @@ def _refine_layer(
                     nodes[ids, 1],
                     initial,
                     layer.chain.samples_per_period,
+                    allocation_check=budget.check_new if budget is not None else None,
                 )
                 new, ch, extension = adaptive_wells_at_pitch(
-                    sf, nodes[ids, 0], nodes[ids, 1], H[ids], ch, b, order, max_periods
+                    sf,
+                    nodes[ids, 0],
+                    nodes[ids, 1],
+                    H[ids],
+                    ch,
+                    b,
+                    order,
+                    max_periods,
+                    allocation_check=(
+                        budget.check_extension if budget is not None else None
+                    ),
                 )
                 new_values[ids] = _point_weights(sf, new, ch)[0]
                 new_status[ids] = new.status
+                del ch, new
             refined = np.empty((len(edges), factor + 1, 5))
             refined[:, ::2] = values
             refined[:, 1::2] = new_values.reshape(len(edges), len(fractions), 5)
@@ -320,6 +334,7 @@ def measure_pitch(
     diagnostics = []
     capped = failed = 0
     for layer in geometry.layers:
+        budget = layer.chain_budget
         well, layer.chain, extension = adaptive_wells_at_pitch(
             layer.surface,
             layer.points[:, 0],
@@ -329,7 +344,10 @@ def measure_pitch(
             b,
             order,
             max_periods,
+            allocation_check=budget.check_extension if budget is not None else None,
         )
+        if budget is not None:
+            budget.track(layer, layer.chain)
         if refine:
             value, stats, cap, bad = _refine_layer(
                 layer,
@@ -398,6 +416,7 @@ class Geometry:
         periods=64,
         samples_per_period=128,
         progress=None,
+        chain_budget_bytes=768 * 1024**2,
     ):
         self.s = np.asarray(s_grid, float)
         if (
@@ -408,16 +427,26 @@ class Geometry:
         ):
             raise ValueError("s grid must increase within (0,1]")
         self.layers = []
+        self.chain_budget = ChainBudget(chain_budget_bytes)
         for s in self.s:
             sf = Surface(field, s, nt, nphi)
             arcs = place_nodes(sf, ridge_arcs(sf), density)
             points = np.vstack([a.points for a in arcs]) if arcs else np.empty((0, 2))
             heights = np.concatenate([a.H for a in arcs]) if arcs else np.empty(0)
             ch = trace_chains(
-                sf, points[:, 0], points[:, 1], periods, samples_per_period
+                sf,
+                points[:, 0],
+                points[:, 1],
+                periods,
+                samples_per_period,
+                allocation_check=self.chain_budget.check_new,
             )
             sf.release_derivatives()
-            self.layers.append(Layer(sf, arcs, ch, points, heights, node_measure(arcs)))
+            layer = Layer(
+                sf, arcs, ch, points, heights, node_measure(arcs), self.chain_budget
+            )
+            self.layers.append(layer)
+            self.chain_budget.track(layer, ch)
             if progress:
                 progress(f"surface s={s:.6g}, nodes={len(points)}")
         self.partners = [

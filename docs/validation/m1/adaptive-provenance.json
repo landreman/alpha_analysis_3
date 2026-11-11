@@ -8544,13 +8544,13 @@
   "current_source_hashes": {
     "src/alpha_analysis_3/__init__.py": "cad41e41dc02a6bb1b517bbf8ebb463a8401eadd5a1a66332a86e57405ed2ddf",
     "src/alpha_analysis_3/boozer_field.py": "1132eeb1e3e528dde2bfd6b5490d0e118cc02a05852de68a60e1c4423e1ad2ac",
-    "src/alpha_analysis_3/chains.py": "fa8f531e244fee9ea8ce4453f3e8e4a3808a1adb64377408b56a8f385bdccba7",
+    "src/alpha_analysis_3/chains.py": "5c28aa5eaa0f5e310f14b18b4c0548502a2b42740999b47d1b1afe55af7d1d5a",
     "src/alpha_analysis_3/conventions.py": "6240892864f492464f89cfb1bff80a39ba3588e1a5ed3b1650c5ea02ed7a0c58",
     "src/alpha_analysis_3/diagnostics.py": "39c31bb00a6e92af605fbf5545dd7c629907eced725d0ad7f2bb7f253dfffe0c",
-    "src/alpha_analysis_3/ledger.py": "789acb19781be93dcfd82043c636079f58d7f4de488e34b78a1138193060fe40",
+    "src/alpha_analysis_3/ledger.py": "4eb5f20757c49d7ff150a1bccea17452776e62a2f1587dab5ad881ec5e353863",
     "src/alpha_analysis_3/ridge.py": "b223b2e9326119813cfc734eb5722d7661788c4b3e7085ff1572022014e70b47",
     "src/alpha_analysis_3/tables.py": "c6edecf82271e1e1796cea943e829a4d7d2dad5cf394f84314369c1572541c14",
-    "src/alpha_analysis_3/wells.py": "74ba02e9a99e62a791cdbbc0a20bc29de7817da31eedf815658cc24165359b88"
+    "src/alpha_analysis_3/wells.py": "775c6a1ea5ba71749232b4ee528077038b4d5c96dc38e8246ed69a42947e0251"
   },
   "host": {
     "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
@@ -8668,19 +8668,30 @@
       "reverted": true
     }
   ],
+  "initial_local_checks": {
+    "make_check": {
+      "tests": 32,
+      "wall_seconds": 8.27
+    },
+    "make_test": {
+      "tests": 32,
+      "wall_seconds": 9.92
+    },
+    "make_smoke": true
+  },
   "local_checks": {
     "make_check": {
       "passed": true,
-      "tests": 32,
-      "wall_seconds": 8.27,
+      "tests": 33,
+      "wall_seconds": 9.93,
       "budget_seconds": 300
     },
     "make_test": {
       "passed": true,
-      "tests": 32,
-      "wall_seconds": 9.92,
+      "tests": 33,
+      "wall_seconds": 10.37,
       "budget_seconds": 120,
-      "largest_test_seconds": 4.94
+      "largest_test_seconds": 5.58
     },
     "make_smoke": {
       "passed": true,
@@ -8688,5 +8699,11 @@
     },
     "test_workers": 3,
     "black_files": 19
+  },
+  "post_review": {
+    "review_url": "https://github.com/landreman/alpha_analysis_3/actions/runs/43062046706",
+    "chain_budget_bytes": 805306368,
+    "scope": "Shared retained and replacement chain-array budget; 2 GB RSS watchdog remains separate. Added after recorded numerical timings; quadrature and classification unchanged.",
+    "regression": "test_chain_budget_is_shared_across_surface_queries"
   }
 }

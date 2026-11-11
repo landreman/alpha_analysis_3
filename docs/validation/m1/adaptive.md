@@ -118,6 +118,9 @@ Their transverse changes are 0.3964% and 0.4392%. The 58 other selected
 production source checks have finite ratios. The base grid has no residual
 capped node; its finite ledger closure does not exclude narrow unknown strips
 revealed at higher density.
+The partial lower bounds themselves are 5.70855/307.14855 = 1.86% (uniform)
+and 4.04436/73.16905 = 5.53% (peaked) of the slice volume. The full unknown
+weight is not bounded above by those numbers.
 
 ## Results
 
@@ -157,6 +160,15 @@ revealed at higher density.
 
 The full ratios, errors and capped/failed counts are in [adaptive-matrix.csv](adaptive-matrix.csv), including the superseded production estimates. The base matrix meets the ledger-ratio criterion; its retained PCA .95 peaked convergence miss is resolved at production density. All selected results here use trapezoids. The final production d23p4 matrix uses local control 0.25%, 4096 phi slices and unchanged 1% acceptance. Other production matrix entries use the survey controls below.
 <!-- /RESULTS -->
+
+Ratios above one cannot be attributed to missing coverage. PCA 0.95 peaked,
+for example, moves from 1.023661 to 1.033441 at production density; its 1.66%
+transverse-change estimate does not explain the 3.34% excess. M2/M4 must
+compare surfaces to separate coverage, ridge reconnections, radial variation
+near B_max(s)=b, and possible volume-reference misses of narrow angular
+intervals. These are hypotheses, not a diagnosis. The independent n3are 0.5
+volume changes from about 301.5 to 307.1 between the radial grids. The M1
+ledger tolerance does not certify radial convergence or the future 1% target.
 
 ## Long-well survey and the future budget
 
@@ -230,8 +242,8 @@ and allow opposite strip errors to cancel. The clean local suite and final
 GitHub checks are recorded below.
 
 <!-- CHECKS -->
-`make check`: Black clean, 32 tests passed; full-tier process 8.27 s / 300 s.
-`make test`: 32 passed; fast-tier process 9.92 s / 120 s; largest test 4.94 s.
+`make check`: Black clean, 33 tests passed; full-tier process 9.93 s / 300 s.
+`make test`: 33 passed; fast-tier process 10.37 s / 120 s; largest test 5.58 s.
 Both use three pytest workers. `make smoke`: clean isolated install/import passed.
 Final GitHub Tests and the requested Claude review are recorded on
 [PR #1](https://github.com/landreman/alpha_analysis_3/pull/1).
@@ -248,6 +260,26 @@ or compilation cache are used.
 These are ledger and diagnostic-sweep timings, not complete f or N-vs-2N
 runtime acceptance. The Python/SciPy implementation still needs substantial
 optimization for M5; M3 must first assess coverage, connectivity and the bracket.
+
+### Review follow-through
+
+[Claude's first review](https://github.com/landreman/alpha_analysis_3/pull/1#issuecomment-6801795980)
+found no blocking issue and accepted the M1 scope. Its documentation findings
+are reflected above and in STATUS: n3are's incomplete production ledger and
+the unresolved excess ratios are explicit. The local d23p4 surface regression
+has a 2% target; it tests the tighter-control path, while the independent full
+source-weighted six-pitch matrix supplies the 1% claim.
+
+The memory note led to a shared 768 MiB budget for chain tables across all
+geometry layers. Before packing or replacing tables, it counts retained
+chains, an unretained intermediate chain, the newly traced rows and the full
+replacement, including NaN padding. It also applies to surface-major survey
+queries through the layer's shared budget. A low-budget analytic regression
+admits one surface's extension and rejects the next before allocation; the
+unextended surface keeps its original capped chain. Weak references avoid
+retaining discarded geometries. The separate per-array bounds and 2 GB RSS
+watchdog remain in force. This guard was added after the recorded numerical
+timings; it does not change quadrature, statuses or accepted tolerances.
 
 ## Diagnostic
 

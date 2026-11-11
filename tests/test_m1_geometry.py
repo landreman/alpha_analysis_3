@@ -298,6 +298,45 @@ def test_ceiling_keeps_unknown_with_partial_weight_lower_bound():
     assert 0 < a.partial_K[0] < b.partial_K[0] < full.K[0]
 
 
+def test_chain_budget_is_shared_across_surface_queries():
+    from types import SimpleNamespace
+
+    geometry = Geometry(
+        FourierModel(iota=0.2),
+        [0.1, 0.9],
+        nt=64,
+        nphi=64,
+        density=8 / (2 * np.pi),
+        periods=1,
+    )
+    # Analytic maxima repeat every five periods: an eight-period chain has
+    # one maximum and two minima. With eight nodes it owns 7*64 bytes; the
+    # initial chain owns 5*64. A 30*64 budget admits the first replacement
+    # peak (29*64), but not the second (31*64), including temporary copies.
+    geometry.chain_budget.limit_bytes = 30 * 8 * np.dtype(float).itemsize
+    first, second = geometry.layers
+    accepted = measure_pitch(
+        SimpleNamespace(layers=[first]), 2.1, max_periods=8, refine=False
+    )
+    assert accepted.capped_nodes == accepted.failed_nodes == 0
+    assert np.all(first.chain.periods == 8)
+    with pytest.raises(MemoryError, match="global chain allocation"):
+        measure_pitch(
+            SimpleNamespace(layers=[second]), 2.1, max_periods=8, refine=False
+        )
+    assert np.all(second.chain.periods == 1)
+    assert geometry.chain_budget.retained_bytes <= geometry.chain_budget.limit_bytes
+    with pytest.raises(MemoryError, match="global chain allocation"):
+        Geometry(
+            FourierModel(),
+            [0.1, 0.9],
+            nt=64,
+            nphi=64,
+            periods=1,
+            chain_budget_bytes=1,
+        )
+
+
 @pytest.mark.parametrize("strip_rule", ["trapezoid", "simpson"])
 def test_long_strip_refinement_preserves_measure_and_reports_level(strip_rule):
     geometry = Geometry(
@@ -399,6 +438,7 @@ def test_slice_error_uses_absolute_changes_and_source_weights():
 
 
 def test_marginal_surface_needs_tighter_quadrature_control():
+    """Local 2% regression; the offline source-weighted matrix tests the 1% gate."""
     from types import SimpleNamespace
     from alpha_analysis_3.ledger import Layer, node_measure
 

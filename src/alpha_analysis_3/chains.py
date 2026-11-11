@@ -6,8 +6,51 @@ which retains shallow first minima missed by field-value differences.
 """
 
 from dataclasses import dataclass
+import weakref
 
 import numpy as np
+
+CHAIN_ARRAYS = ("max_z", "max_H", "min_z", "min_H", "periods")
+
+
+def chain_bytes(chain):
+    """Owned chain-array bytes, including NaN padding and per-row limits."""
+    return sum(getattr(chain, name).nbytes for name in CHAIN_ARRAYS)
+
+
+class ChainBudget:
+    """Bound chain storage across all layers, including replacement peaks.
+
+    Weak references track the retained geometry without extending its lifetime.
+    The 768 MiB default leaves room for field tables and sampling temporaries;
+    the driver's independent 2 GB RSS watchdog remains mandatory.
+    """
+
+    def __init__(self, limit_bytes=768 * 1024**2):
+        if limit_bytes <= 0:
+            raise ValueError("chain budget must be positive")
+        self.limit_bytes = int(limit_bytes)
+        self._retained = {}
+
+    def track(self, owner, chain):
+        self._retained[id(owner)] = weakref.ref(chain)
+
+    def _live(self):
+        return {
+            id(ch): ch for ref in self._retained.values() if (ch := ref()) is not None
+        }
+
+    @property
+    def retained_bytes(self):
+        return sum(chain_bytes(ch) for ch in self._live().values())
+
+    def check_new(self, allocation_bytes):
+        if self.retained_bytes + allocation_bytes > self.limit_bytes:
+            raise MemoryError("global chain allocation budget exceeded")
+
+    def check_extension(self, current, allocation_bytes):
+        extra = 0 if id(current) in self._live() else chain_bytes(current)
+        self.check_new(extra + allocation_bytes)
 
 
 @dataclass
@@ -21,7 +64,9 @@ class Chains:
     periods: np.ndarray
 
 
-def trace_chains(surface, theta, phi, periods=64, samples_per_period=128):
+def trace_chains(
+    surface, theta, phi, periods=64, samples_per_period=128, allocation_check=None
+):
     """Trace up to K_max periods, with bounded temporary arrays (32 lines)."""
     if (
         not 1 <= periods <= 256
@@ -69,6 +114,15 @@ def trace_chains(surface, theta, phi, periods=64, samples_per_period=128):
                 take = rows == row
                 output.append((offsets[take], heights[take]))
 
+    widths = [
+        max(1, max((len(r[0]) for r in rows), default=0)) for rows in (maxima, minima)
+    ]
+    if allocation_check is not None:
+        allocation_check(
+            2 * len(theta) * sum(widths) * np.dtype(float).itemsize
+            + len(theta) * np.dtype(int).itemsize
+        )
+
     def pack(rows):
         width = max((len(r[0]) for r in rows), default=0)
         if len(theta) * max(1, width) > 4_000_000:
@@ -105,14 +159,21 @@ def chain_rows(chain, ids):
     )
 
 
-def replace_chain_rows(chain, ids, extended):
+def replace_chain_rows(chain, ids, extended, allocation_check=None):
     """Replace only retraced rows; pad other rows with NaN, never fake extrema."""
+    allocation_bytes = chain.periods.nbytes
+    for name in CHAIN_ARRAYS[:-1]:
+        old, new = getattr(chain, name), getattr(extended, name)
+        elements = len(old) * max(old.shape[1], new.shape[1])
+        if elements > 4_000_000:
+            raise MemoryError("extended table exceeds the bounded chain allocation")
+        allocation_bytes += elements * old.dtype.itemsize
+    if allocation_check is not None:
+        allocation_check(allocation_bytes)
     arrays = []
     for name in ("max_z", "max_H", "min_z", "min_H"):
         old, new = getattr(chain, name), getattr(extended, name)
         width = max(old.shape[1], new.shape[1])
-        if len(old) * width > 4_000_000:
-            raise MemoryError("extended table exceeds the bounded chain allocation")
         result = np.full((len(old), width), np.nan)
         result[:, : old.shape[1]] = old
         result[ids] = np.nan

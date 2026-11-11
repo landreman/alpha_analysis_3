@@ -371,8 +371,10 @@ Named acceptance tests:
   refinement retains the closed-ridge seam measure and reports its convergence level.
 - `test_ledger_closes` (fast, one file, two levels, reduced resolution, within 2 %) and
   `test_ledger_matrix` (slow, all 30 cases at base resolution, within 6 % for every case and
-  within 1 % for DMercFail and d23p4). The 6 % allowance is the known coverage gap that M2
-  closes; the table of ratios is committed.
+  within 1 % for DMercFail and d23p4). This is an offline driver, outside unit CI.
+  The 6 % allowance permits M1's incomplete coverage and numerical error; observed ratios
+  above one cannot come from missing coverage alone. M2/M4 must distinguish these errors
+  before claiming the tighter production target. The table of ratios is committed.
 
 Mutations: drop the seam term; flip sign(C); omit 1/B in dℓ.
 
