@@ -22,6 +22,7 @@ class Ridge:
     alpha: np.ndarray | None = None
     dalpha: np.ndarray | None = None
     measure: np.ndarray | None = None
+    endpoints: np.ndarray | None = None
 
 
 def _same(a, b, tol=1e-7):
@@ -155,6 +156,7 @@ def place_nodes(surface, arcs, density=128 / TWO_PI):
                 alpha,
                 np.abs(delta),
                 measure,
+                None if arc.closed else points[[0, -1]].copy(),
             )
         )
     return result

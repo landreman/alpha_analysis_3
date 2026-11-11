@@ -172,3 +172,36 @@ class Surface:
         self.DB = self.D2B = None
         self._coeff[1:] = [None, None]
         self._corrections[1:] = [None, None]
+
+    def restore_derivatives(self):
+        """Lazily rebuild extraction tables for ADR 0001 selective tracing.
+
+        Only the surface currently being refined needs these temporary arrays.
+        The field coefficients and interpolation rule are unchanged.
+        """
+        if self.DB is not None:
+            return
+        k = self.iota * self.m - self.n
+        fm = np.fft.fftfreq(self.nt) * self.nt
+        fn = np.fft.fftfreq(self.nphi) * self.nphi
+        for which, factor in ((1, 1j * k), (2, -k * k)):
+            spectrum = np.zeros((self.nt, self.nphi), complex)
+            np.add.at(
+                spectrum,
+                (self.m % self.nt, (-self.n // self.nfp) % self.nphi),
+                (self.c - 1j * self.d) * factor,
+            )
+            table = np.fft.ifft2(spectrum).real * self.nt * self.nphi
+            self._coeff[which] = spline_filter(table, order=3, mode="grid-wrap")
+            self._corrections[which] = [
+                spline_filter(
+                    np.fft.ifft2(spectrum * axis**4).real * self.nt * self.nphi,
+                    order=3,
+                    mode="grid-wrap",
+                )
+                for axis in (fm[:, None], fn[None, :])
+            ]
+            if which == 1:
+                self.DB = table
+            else:
+                self.D2B = table

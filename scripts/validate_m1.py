@@ -22,7 +22,12 @@ import numpy as np
 from alpha_analysis_3.boozer_field import BoozerField
 from alpha_analysis_3.conventions import LAMBDA_LEVELS, default_source, uniform_source
 from alpha_analysis_3.diagnostics import plot_geometry, raw_transition_counts
-from alpha_analysis_3.ledger import Geometry, pitch_ledger
+from alpha_analysis_3.ledger import (
+    Geometry,
+    pitch_ledger,
+    measure_pitch,
+    volume_surface,
+)
 from alpha_analysis_3.wells import wells_at_pitch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,7 +75,22 @@ def test_ledger_matrix(rows):
         tolerance = 0.01 if row["file"] in ("DMercFail", "d23p4") else 0.06
         for name, result in row["sources"].items():
             ratio = result.get("ratio", float("nan"))
-            if not np.isfinite(ratio) or abs(ratio - 1) > tolerance:
+            if (
+                not result.get("refinement_converged", True)
+                or result.get("failed_nodes", 0) > 0
+                or (
+                    result.get("capped_nodes", 0) > 0
+                    and (
+                        not np.isfinite(result.get("resolved_plus_lower", float("nan")))
+                        or result.get("resolved_plus_lower", float("inf"))
+                        > result["volume_weight"] * (1 + tolerance)
+                    )
+                )
+                or (
+                    result.get("capped_nodes", 0) == 0
+                    and (not np.isfinite(ratio) or abs(ratio - 1) > tolerance)
+                )
+            ):
                 failures.append((row["file"], row["lambda_n"], name, ratio, tolerance))
     return failures
 
@@ -128,16 +148,38 @@ def run(args):
                 guard.stage = f'{entry["id"]} lambda={level}'
                 t = time.monotonic()
                 b = geometry.Bmin + level * (geometry.Bmax - geometry.Bmin)
-                wells = [
-                    wells_at_pitch(
-                        l.surface,
-                        l.points[:, 0],
-                        l.points[:, 1],
-                        l.H,
-                        l.chain,
+                measure = (
+                    measure_pitch(
+                        geometry,
                         b,
                         order=args.order,
+                        max_periods=args.max_periods,
+                        transverse_tolerance=args.transverse_tolerance
+                        or (0.01 if entry["id"] in ("DMercFail", "d23p4") else 0.06),
+                        max_factor=args.max_factor,
+                        refine=not args.no_refine,
                     )
+                    if args.adaptive
+                    else None
+                )
+                wells = (
+                    measure.wells
+                    if measure is not None
+                    else [
+                        wells_at_pitch(
+                            l.surface,
+                            l.points[:, 0],
+                            l.points[:, 1],
+                            l.H,
+                            l.chain,
+                            b,
+                            order=args.order,
+                        )
+                        for l in geometry.layers
+                    ]
+                )
+                volume_values = [
+                    volume_surface(l.surface, b, args.volume_phi, args.order)
                     for l in geometry.layers
                 ]
                 results = {
@@ -148,6 +190,8 @@ def run(args):
                         volume_nphi=args.volume_phi,
                         order=args.order,
                         wells=wells,
+                        measure=measure,
+                        volume_values=volume_values,
                     )
                     for name, h in [
                         ("uniform", uniform_source),
@@ -169,6 +213,7 @@ def run(args):
                     raw_T_Gamma=counts,
                     count_mismatches=sum(a != c for a, c in counts),
                     seconds=time.monotonic() - t,
+                    adaptive=measure.diagnostics if measure is not None else [],
                     failed_probes=[
                         dict(
                             s=l.surface.s,
@@ -229,4 +274,9 @@ if __name__ == "__main__":
     parser.add_argument("--samples", type=int, default=128)
     parser.add_argument("--volume-phi", type=int, default=512)
     parser.add_argument("--order", type=int, default=64)
+    parser.add_argument("--adaptive", action="store_true")
+    parser.add_argument("--max-periods", type=int, default=256)
+    parser.add_argument("--max-factor", type=int, default=16)
+    parser.add_argument("--transverse-tolerance", type=float)
+    parser.add_argument("--no-refine", action="store_true")
     raise SystemExit(run(parser.parse_args()))

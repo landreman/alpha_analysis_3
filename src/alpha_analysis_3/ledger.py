@@ -7,6 +7,7 @@ stored but never used to discard birth weight here.
 """
 
 from dataclasses import dataclass
+import time
 
 import numpy as np
 from scipy.integrate import trapezoid
@@ -15,7 +16,14 @@ from .chains import trace_chains
 from .conventions import source_at_s
 from .ridge import place_nodes, radial_partners, ridge_arcs
 from .tables import Surface, TWO_PI, global_extrema
-from .wells import ACTIVE, CAPPED, FAILED, wells_at_pitch
+from .wells import (
+    ACTIVE,
+    CAPPED,
+    FAILED,
+    INACTIVE,
+    wells_at_pitch,
+    adaptive_wells_at_pitch,
+)
 
 
 @dataclass
@@ -26,6 +34,305 @@ class Layer:
     points: np.ndarray
     H: np.ndarray
     measure: np.ndarray
+
+
+@dataclass
+class PitchMeasure:
+    """Per-surface weights, before source reweighting; DESIGN §6 / ADR 0001.
+
+    Columns are resolved, capped lower bound, resolved tails >48/>64/>128
+    periods. A capped lower bound is not an estimate of the full missing weight.
+    """
+
+    weights: np.ndarray
+    wells: list
+    diagnostics: list
+    capped_nodes: int
+    failed_nodes: int
+    converged: bool
+    tolerance: float = 0.01
+
+
+def _point_weights(surface, well, chain):
+    result = np.zeros((len(well.status), 5))
+    active = well.status == ACTIVE
+    result[active, 0] = well.K[active]
+    capped = well.status == CAPPED
+    result[capped, 1] = well.partial_K[capped]
+    indices = np.flatnonzero(active)
+    periods = np.zeros(len(well.status))
+    periods[indices] = (
+        np.abs(chain.max_z[indices, well.exit_index[indices]]) / surface.L
+    )
+    for column, limit in enumerate((48, 64, 128), 2):
+        ids = np.flatnonzero(active & (periods > limit))
+        result[ids, column] = well.K[ids]
+    return result, periods
+
+
+def _relative_strip_change(previous, current, known):
+    """Sum magnitudes before summing strips; opposite errors cannot cancel."""
+    difference = np.sum((current - previous)[:, :2], axis=1)
+    return float(np.sum(np.abs(difference))) / max(abs(known), 1e-300)
+
+
+def slice_refinement_error(s, weights, diagnostics, h):
+    """Source-weighted full-slice estimate from absolute edge changes.
+
+    Magnitudes are summed before applying source and radial weights. Opposite
+    strips or surfaces cannot cancel. Local convergence, including a 16x
+    ceiling, remains separately reported. This estimates changes in resolved
+    plus partial-lower weight, not the unknown full weight of capped states.
+    """
+    known = np.sum(weights[:, :2], axis=1)
+    changes = np.array([d.get("relative_change", 0.0) for d in diagnostics]) * known
+    source = source_at_s(h, s)
+    total = float(trapezoid(source * known, s))
+    error = float(trapezoid(source * changes, s))
+    return error, error / max(abs(total), 1e-300)
+
+
+def _refine_layer(layer, well, b, tolerance, max_factor, max_periods, order):
+    """Dyadic transverse trapezoids on long-well and activity-boundary edges.
+
+    Every base node remains in the quadrature. Convergence is the change in
+    selected strip weight divided by the complete surface's known weight;
+    applying the slice tolerance on every surface also bounds its source-
+    weighted radial sum. No volume-reference values enter this calculation.
+    """
+    sf = layer.surface
+    point, periods = _point_weights(sf, well, layer.chain)
+    base = layer.measure @ point
+    long = (periods > 64) | (well.status == CAPPED)
+    edges = []
+    offset = 0
+    for arc in layer.arcs:
+        n = len(arc.H)
+        for k in range(n if arc.closed else n - 1):
+            a, c = offset + k, offset + (k + 1) % n
+            boundary = (well.status[a] != well.status[c]) or (
+                (layer.H[a] > b) != (layer.H[c] > b)
+            )
+            if not (long[a] or long[c] or boundary):
+                continue
+            right = arc.points[(k + 1) % n].copy()
+            if arc.closed and k == n - 1:
+                right += TWO_PI * np.array(arc.wind)
+            width = arc.dalpha[k]
+            edges.append(
+                (
+                    arc.points[k],
+                    right,
+                    width,
+                    np.stack((point[a], point[c])),
+                    np.array([well.status[a], well.status[c]]),
+                    np.array([a, c]),
+                    width * (point[a] + point[c]) / 2,
+                )
+            )
+        if not arc.closed and arc.endpoints is not None:
+            for node, fold in ((0, 0), (n - 1, 1)):
+                idx = offset + node
+                if not long[idx]:
+                    continue
+                endpoint = arc.endpoints[fold]
+                alpha = endpoint[0] - sf.iota * endpoint[1] / sf.nfp
+                width = abs(alpha - arc.alpha[node])
+                # At a fold m0=H0, so no strictly active starting well exists.
+                edges.append(
+                    (
+                        endpoint,
+                        arc.points[node],
+                        width,
+                        np.stack((np.zeros(5), point[idx])),
+                        np.array([INACTIVE, well.status[idx]]),
+                        np.array([-1, idx]),
+                        width * point[idx],
+                    )
+                )
+        offset += n
+    stats = dict(
+        long_nodes=int(long.sum()),
+        marked_edges=len(edges),
+        factor=1,
+        converged=True,
+        relative_change=0.0,
+        levels=[],
+        extension_seconds=0.0,
+        refinement_seconds=0.0,
+        maximum_periods=int(np.max(layer.chain.periods, initial=0)),
+    )
+    caps = set(np.flatnonzero(well.status == CAPPED).tolist())
+    failed = int(np.sum(well.status == FAILED))
+    if not edges:
+        return base, stats, len(caps), failed
+    original_edges = np.array([e[6] for e in edges])
+    original = original_edges.sum(axis=0)
+    unmarked = base - original
+    widths = np.array([e[2] for e in edges])
+    left = np.array([e[0] for e in edges])
+    right = np.array([e[1] for e in edges])
+    values = np.array([e[3] for e in edges])
+    statuses = np.array([e[4] for e in edges])
+    previous = original_edges
+    start = time.monotonic()
+    had_derivatives = sf.DB is not None
+    sf.restore_derivatives()
+    try:
+        factor = 2
+        stats["converged"] = False
+        while factor <= max_factor:
+            fractions = np.arange(1, factor, 2) / factor
+            guesses = (
+                left[:, None, :] + (right - left)[:, None, :] * fractions[None, :, None]
+            )
+            nodes = guesses.reshape(-1, 2).copy()
+            for _ in range(12):
+                d1, d2 = sf.db(nodes[:, 0], nodes[:, 1]), sf.d2b(
+                    nodes[:, 0], nodes[:, 1]
+                )
+                step = np.divide(
+                    d1, d2, out=np.zeros_like(d1), where=np.abs(d2) > 1e-14
+                )
+                nodes -= np.clip(step, -0.02, 0.02)[:, None] * np.array(
+                    [sf.iota, sf.nfp]
+                )
+            H = sf.b(nodes[:, 0], nodes[:, 1])
+            valid = (sf.d2b(nodes[:, 0], nodes[:, 1]) < 0) & (
+                np.abs(sf.db(nodes[:, 0], nodes[:, 1])) < 1e-9 * np.maximum(H, 1)
+            )
+            # Auxiliary quadrature points are pitch-specific. H<=b is already
+            # inactive. For the others stop once the first exit is known,
+            # doubling a short initial scan through 64 and then to the same
+            # 256-period ceiling. Base geometry chains still start at 64.
+            ids = np.flatnonzero(valid & (H > b))
+            new_values = np.zeros((len(nodes), 5))
+            new_status = np.full(len(nodes), INACTIVE, dtype=np.int8)
+            new_status[~valid] = FAILED
+            extension = dict(maximum_periods=0, extension_seconds=0.0)
+            if len(ids):
+                initial = min(2, int(np.min(layer.chain.periods)), max_periods)
+                ch = trace_chains(
+                    sf,
+                    nodes[ids, 0],
+                    nodes[ids, 1],
+                    initial,
+                    layer.chain.samples_per_period,
+                )
+                new, ch, extension = adaptive_wells_at_pitch(
+                    sf, nodes[ids, 0], nodes[ids, 1], H[ids], ch, b, order, max_periods
+                )
+                new_values[ids] = _point_weights(sf, new, ch)[0]
+                new_status[ids] = new.status
+            refined = np.empty((len(edges), factor + 1, 5))
+            refined[:, ::2] = values
+            refined[:, 1::2] = new_values.reshape(len(edges), len(fractions), 5)
+            state = np.empty((len(edges), factor + 1), dtype=np.int8)
+            state[:, ::2] = statuses
+            state[:, 1::2] = new_status.reshape(len(edges), len(fractions))
+            values, statuses = refined, state
+            per_edge = (
+                widths[:, None]
+                * (values[:, 0] / 2 + values[:, -1] / 2 + values[:, 1:-1].sum(axis=1))
+                / factor
+            )
+            strip = per_edge.sum(axis=0)
+            known = float(np.sum((unmarked + strip)[:2]))
+            change = _relative_strip_change(previous, per_edge, known)
+            stats["levels"].append(
+                dict(
+                    factor=factor, strip_weights=strip.tolist(), relative_change=change
+                )
+            )
+            stats.update(
+                factor=factor,
+                relative_change=change,
+                maximum_periods=max(
+                    stats["maximum_periods"], extension["maximum_periods"]
+                ),
+            )
+            stats["extension_seconds"] += extension["extension_seconds"]
+            # Compare two subdivided levels, retaining all original samples.
+            if factor >= 4 and change < tolerance and not np.any(statuses == FAILED):
+                stats["converged"] = True
+                break
+            previous = per_edge
+            factor *= 2
+    finally:
+        if not had_derivatives:
+            sf.release_derivatives()
+    stats["refinement_seconds"] = time.monotonic() - start
+    internal_caps = int(np.sum(statuses[:, 1:-1] == CAPPED))
+    failed += int(np.sum(statuses[:, 1:-1] == FAILED))
+    return unmarked + strip, stats, len(caps) + internal_caps, failed
+
+
+def measure_pitch(
+    geometry,
+    b,
+    order=64,
+    max_periods=256,
+    transverse_tolerance=0.01,
+    max_factor=16,
+    refine=True,
+):
+    """Evaluate reusable ridge weights with ADR 0001 adaptive policy.
+
+    The independent volume integral is deliberately absent. Source profiles
+    and volume-reference resolution can be changed without recomputing wells.
+    """
+    if max_factor not in (4, 8, 16):
+        raise ValueError("transverse refinement factor must be 4, 8 or 16")
+    if not 0 < transverse_tolerance < 1:
+        raise ValueError("transverse tolerance must be between zero and one")
+    weights = []
+    wells = []
+    diagnostics = []
+    capped = failed = 0
+    for layer in geometry.layers:
+        well, layer.chain, extension = adaptive_wells_at_pitch(
+            layer.surface,
+            layer.points[:, 0],
+            layer.points[:, 1],
+            layer.H,
+            layer.chain,
+            b,
+            order,
+            max_periods,
+        )
+        if refine:
+            value, stats, cap, bad = _refine_layer(
+                layer, well, b, transverse_tolerance, max_factor, max_periods, order
+            )
+        else:
+            value = layer.measure @ _point_weights(layer.surface, well, layer.chain)[0]
+            stats = dict(
+                factor=1,
+                converged=True,
+                long_nodes=int(np.sum(well.status == CAPPED)),
+                marked_edges=0,
+                levels=[],
+                refinement_seconds=0.0,
+                extension_seconds=0.0,
+                maximum_periods=extension["maximum_periods"],
+            )
+            cap = int(np.sum(well.status == CAPPED))
+            bad = int(np.sum(well.status == FAILED))
+        stats["base_extension"] = extension
+        weights.append(value)
+        wells.append(well)
+        diagnostics.append(stats)
+        capped += cap
+        failed += bad
+    return PitchMeasure(
+        np.asarray(weights),
+        wells,
+        diagnostics,
+        capped,
+        failed,
+        all(s["converged"] for s in diagnostics),
+        transverse_tolerance,
+    )
 
 
 def node_measure(arcs):
@@ -148,28 +455,55 @@ def volume_surface(surface, b, nphi=512, order=64):
     return total * TWO_PI / nphi * abs(surface.C) / surface.nfp
 
 
-def pitch_ledger(geometry, b, h, volume_nphi=512, order=64, wells=None):
+def pitch_ledger(
+    geometry,
+    b,
+    h,
+    volume_nphi=512,
+    order=64,
+    wells=None,
+    measure=None,
+    volume_values=None,
+):
     """Return ridge/volume weights and explicit unresolved diagnostics.
 
     A capped or failed well makes the ridge total incomplete (NaN), rather
     than silently assigning zero weight. resolved_weight remains diagnostic.
     Partner-frontier weight is reported separately and stays in the total.
     """
-    ridge, volume, frontier = [], [], []
+    ridge, lower, volume, frontier = [], [], [], []
     capped = failed = 0
     for i, l in enumerate(geometry.layers):
         well = (
-            wells[i]
-            if wells is not None
-            else wells_at_pitch(
-                l.surface, l.points[:, 0], l.points[:, 1], l.H, l.chain, b, order
+            measure.wells[i]
+            if measure is not None
+            else (
+                wells[i]
+                if wells is not None
+                else wells_at_pitch(
+                    l.surface, l.points[:, 0], l.points[:, 1], l.H, l.chain, b, order
+                )
             )
         )
         good = well.status == ACTIVE
         capped += int(np.sum(well.status == CAPPED))
         failed += int(np.sum(well.status == FAILED))
-        ridge.append(float(np.sum(l.measure[good] * well.K[good])))
-        volume.append(volume_surface(l.surface, b, volume_nphi, order))
+        ridge.append(
+            float(measure.weights[i, 0])
+            if measure is not None
+            else float(np.sum(l.measure[good] * well.K[good]))
+        )
+        cap = well.status == CAPPED
+        lower.append(
+            float(measure.weights[i, 1])
+            if measure is not None
+            else float(np.sum(l.measure[cap] * well.partial_K[cap]))
+        )
+        volume.append(
+            volume_values[i]
+            if volume_values is not None
+            else volume_surface(l.surface, b, volume_nphi, order)
+        )
         missing = (
             geometry.partners[i] < 0
             if i < len(geometry.partners)
@@ -181,10 +515,49 @@ def pitch_ledger(geometry, b, h, volume_nphi=512, order=64, wells=None):
     source = source_at_s(h, geometry.s)
     resolved = float(trapezoid(source * ridge, geometry.s))
     independent = float(trapezoid(source * volume, geometry.s))
+    capped_lower = float(trapezoid(source * lower, geometry.s))
+    if measure is not None:
+        capped, failed = measure.capped_nodes, measure.failed_nodes
     total = resolved if capped + failed == 0 else np.nan
     return dict(
         ridge_weight=total,
         resolved_weight=resolved,
+        capped_weight_lower_bound=capped_lower,
+        resolved_plus_lower=resolved + capped_lower,
+        gap_to_volume=independent - resolved - capped_lower,
+        refinement_error=(
+            slice_refinement_error(geometry.s, measure.weights, measure.diagnostics, h)[
+                0
+            ]
+            if measure is not None
+            else 0.0
+        ),
+        refinement_relative_error=(
+            slice_refinement_error(geometry.s, measure.weights, measure.diagnostics, h)[
+                1
+            ]
+            if measure is not None
+            else 0.0
+        ),
+        refinement_converged=(
+            slice_refinement_error(geometry.s, measure.weights, measure.diagnostics, h)[
+                1
+            ]
+            < measure.tolerance
+            if measure is not None
+            else True
+        ),
+        all_local_refinements_converged=(
+            measure.converged if measure is not None else True
+        ),
+        tail_weights=(
+            {
+                str(limit): float(trapezoid(source * measure.weights[:, j], geometry.s))
+                for j, limit in enumerate((48, 64, 128), 2)
+            }
+            if measure is not None
+            else {}
+        ),
         volume_weight=independent,
         ratio=total / independent if independent > 0 else np.nan,
         frontier_weight=float(trapezoid(source * frontier, geometry.s)),

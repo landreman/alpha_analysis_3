@@ -18,6 +18,7 @@ class Chains:
     min_H: np.ndarray
     limit: float
     samples_per_period: int
+    periods: np.ndarray
 
 
 def trace_chains(surface, theta, phi, periods=48, samples_per_period=128):
@@ -25,7 +26,7 @@ def trace_chains(surface, theta, phi, periods=48, samples_per_period=128):
     if (
         not 1 <= periods <= 256
         or not 16 <= samples_per_period <= 4096
-        or periods * samples_per_period > 65536
+        or periods * samples_per_period > 1_048_576
     ):
         raise ValueError("chain controls exceed the bounded sampling range")
     theta, phi = np.broadcast_arrays(theta, phi)
@@ -34,8 +35,9 @@ def trace_chains(surface, theta, phi, periods=48, samples_per_period=128):
     dz = surface.L / samples_per_period
     distance = np.arange(periods * samples_per_period + 1) * dz
     maxima, minima = [], []
-    for start in range(0, len(theta), 32):
-        th, ph = theta[start : start + 32], phi[start : start + 32]
+    batch = max(1, min(32, 2_097_152 // len(distance)))
+    for start in range(0, len(theta), batch):
+        th, ph = theta[start : start + batch], phi[start : start + batch]
         z = surface.sign * distance
         derivative = surface.sign * surface.db(
             th[:, None] + surface.iota * z, ph[:, None] + surface.nfp * z
@@ -69,6 +71,8 @@ def trace_chains(surface, theta, phi, periods=48, samples_per_period=128):
 
     def pack(rows):
         width = max((len(r[0]) for r in rows), default=0)
+        if len(theta) * max(1, width) > 4_000_000:
+            raise MemoryError("extremum table exceeds the bounded chain allocation")
         offsets = np.full((len(theta), max(1, width)), np.nan)
         heights = offsets.copy()
         for j, (x, h) in enumerate(rows):
@@ -78,5 +82,43 @@ def trace_chains(surface, theta, phi, periods=48, samples_per_period=128):
     mz, mh = pack(maxima)
     nz, nh = pack(minima)
     return Chains(
-        mz, mh, nz, nh, float(surface.sign * distance[-1]), samples_per_period
+        mz,
+        mh,
+        nz,
+        nh,
+        float(surface.sign * distance[-1]),
+        samples_per_period,
+        np.full(len(theta), periods, dtype=int),
     )
+
+
+def chain_rows(chain, ids):
+    """Copy selected integer node rows, retaining each row's traced limit."""
+    return Chains(
+        *(
+            getattr(chain, name)[ids].copy()
+            for name in ("max_z", "max_H", "min_z", "min_H")
+        ),
+        chain.limit,
+        chain.samples_per_period,
+        chain.periods[ids].copy(),
+    )
+
+
+def replace_chain_rows(chain, ids, extended):
+    """Replace only retraced rows; pad other rows with NaN, never fake extrema."""
+    arrays = []
+    for name in ("max_z", "max_H", "min_z", "min_H"):
+        old, new = getattr(chain, name), getattr(extended, name)
+        width = max(old.shape[1], new.shape[1])
+        if len(old) * width > 4_000_000:
+            raise MemoryError("extended table exceeds the bounded chain allocation")
+        result = np.full((len(old), width), np.nan)
+        result[:, : old.shape[1]] = old
+        result[ids] = np.nan
+        result[ids, : new.shape[1]] = new
+        arrays.append(result)
+    periods = chain.periods.copy()
+    periods[ids] = extended.periods
+    limit = chain.limit if abs(chain.limit) > abs(extended.limit) else extended.limit
+    return Chains(*arrays, limit, chain.samples_per_period, periods)
