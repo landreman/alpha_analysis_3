@@ -1,6 +1,6 @@
 # Design: ridge-surface computation of the alpha-loss surrogate f
 
-Revision 1, 2026-11-10. This document is the scientific and numerical contract for
+Revision 2, 2026-11-11. This document is the scientific and numerical contract for
 `alpha_analysis_3`. It supersedes the proposal that was iterated in chat on 2026-11-09
 and carries its approved decisions. The original note defining the metric is
 [docs/references/20261109-01 alpha loss fraction metric.tex](<references/20261109-01 alpha loss fraction metric.tex>).
@@ -104,8 +104,13 @@ five reference equilibria the network is one to three closed curves plus a few a
 ### 3.2 Chains
 
 From x ∈ Λ_s follow the field line forward: the successive crossings of Λ_s are the
-along-line maxima x = x₀, x₁, x₂, … with heights H_k and intervening minima m_k. Chains are
-stored to K_max periods (48–64; the longest well seen in the five files is 19 periods).
+along-line maxima x = x₀, x₁, x₂, … with heights H_k and intervening minima m_k.
+[Accepted ADR 0001](adr/0001-long-well-cap-and-m1-ledger.md) replaces the prototype's
+48–64-period assumption: production base chains use 64 periods; only capped nodes
+are extended by doubling to a hard ceiling of 256. The measured PCA returns at
+about 74 and 115 periods show why the prototype's longest observed 19-period well
+was not a bound. The ceiling remains a cost guard. A node with no exit stays
+unknown with NaN full J and K, and a separately reported partial-K lower bound.
 
 ### 3.3 Wells at pitch b
 
@@ -158,7 +163,10 @@ Production refinements beyond the prototype are marked ►.
    uniform in arc length; open arcs get the same linear density (base 128 nodes per 2π,
    production 256–512). Record θ_M, ζ_M, H, α and |Δα| per edge.
 4. **Chains.** From every node, 128 samples per period to K_max periods, local extrema with
-   parabolic refinement ► and polishing. Vectorized or compiled over all nodes of a surface.
+   derivative sign brackets and polishing. Vectorized or compiled over all nodes of a
+   surface. Under ADR 0001, start base nodes at 64 periods and selectively double capped
+   nodes to 128 and 256. Pitch-specific auxiliary quadrature points may stop as soon as
+   their first exit is resolved; otherwise they double through the same finite ceiling.
 5. **Radial partners.** ► Match nodes between adjacent surfaces in both directions (torus
    distance, threshold ~0.4 rad at base density, scaled with density). Nodes without a
    partner in either direction are frontier nodes and carry unknown weight; a top node not
@@ -172,6 +180,20 @@ Production refinements beyond the prototype are marked ►.
 2. **J and K.** Bounce points by bisection on the table (► polished); Gauss–Legendre with
    the sine substitution over the whole well (384 nodes base; ► composite per extremum
    segment), which removes both endpoint singularities.
+   **Long-well population (ADR 0001).** Subdivide ridge edges adjacent to wells longer
+   than 64 periods dyadically, retaining the original samples, up to 16× the base density.
+   Compare successive strip-weight estimates against the slice tolerance and report the
+   level and change. Activity-boundary edges are also refined for population quadrature;
+   this is not a transition classification. A residual capped node contributes its
+   observed partial-K lower bound, while its full weight remains unknown. Never fill that
+   weight from the independent volume ledger.
+   Add magnitudes of edge-weight changes before radial integration and source weighting;
+   compare that full-slice change with its resolved-plus-partial weight for each source.
+   Retain local ceiling failures separately. A stricter local quadrature control may be
+   used without changing the slice acceptance tolerance. This estimates numerical change
+   in known contributions, not an upper bound on the full weight of capped states.
+   Composite trapezoid and composite Simpson rules use the same dyadic samples;
+   both have positive weights and retain the full seam measure. Record the rule used.
 3. **Transitions.** An edge between two active states is cut when the exit maximum of the
    shorter well appears as an interior maximum of the longer well (within a fraction of the
    local spacing between maxima). Two simpler tests were tried and rejected by the count
@@ -259,6 +281,12 @@ These run in every full computation and are reported, not only tested.
    independent volume integral ∫ h |C| / (B √(1 − B/b)) [B < b] [B_max(s) > b] dV to within
    the stated tolerance (1 % at production resolution; §9 says what each milestone must
    reach). It catches the seam term, the measure, missing coverage and double counting.
+   For residual capped nodes, ADR 0001 requires an incomplete ratio with the resolved
+   sum, partial-weight lower bound and diagnostic gap, and checks
+   resolved + lower bound ≤ reference × (1 + tolerance). The gap is never filled in.
+   From M3 onward, capped birth weight has its own 0.5% of V_h budget, separate from
+   frontier/uncovered weight; exceeding it requires a new ADR, not a higher ceiling.
+   A partial lower bound alone cannot establish compliance with an upper weight budget.
 2. **Transition count.** On every surface the number of T points equals the number of Γ_max
    crossings after subdivision; residual mismatches become unknown weight.
 3. **Additivity.** At every located transition J_parent = J_child1 + J_child3 within the
@@ -336,10 +364,17 @@ Named acceptance tests:
 - `test_well_exit_and_cap_statuses`: multi-period wells, a hidden interior maximum above b,
   and a capped chain receive the right exit index or the capped status; no capped chain is
   reported passing.
+- `test_adaptive_extension_only_retraces_capped_nodes` and
+  `test_ceiling_keeps_unknown_with_partial_weight_lower_bound`: bounded extension and
+  explicit lower-bound accounting without changing unknown status at the ceiling.
+- `test_long_strip_refinement_preserves_measure_and_reports_level`: dyadic transverse
+  refinement retains the closed-ridge seam measure and reports its convergence level.
 - `test_ledger_closes` (fast, one file, two levels, reduced resolution, within 2 %) and
   `test_ledger_matrix` (slow, all 30 cases at base resolution, within 6 % for every case and
-  within 1 % for DMercFail and d23p4). The 6 % allowance is the known coverage gap that M2
-  closes; the table of ratios is committed.
+  within 1 % for DMercFail and d23p4). This is an offline driver, outside unit CI.
+  The 6 % allowance permits M1's incomplete coverage and numerical error; observed ratios
+  above one cannot come from missing coverage alone. M2/M4 must distinguish these errors
+  before claiming the tighter production target. The table of ratios is committed.
 
 Mutations: drop the seam term; flip sign(C); omit 1/B in dℓ.
 
